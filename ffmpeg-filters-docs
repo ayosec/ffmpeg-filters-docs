@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require_relative "lib/storage"
+
+storage = Storage.new
+
+storage.releases.each do |release|
+  # Download the `doc/filters.texi` for each release.
+  source = storage.download(release.tag, "doc/filters.texi")
+  next if source.nil?
+
+  p [release.version, source.size]
+end
+
