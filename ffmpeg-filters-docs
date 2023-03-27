@@ -1,14 +1,36 @@
 #!/usr/bin/env ruby
 
+require_relative "lib/options"
+require_relative "lib/source"
 require_relative "lib/storage"
 
+options = Options.parse!
 storage = Storage.new
 
 storage.releases.each do |release|
-  # Download the `doc/filters.texi` for each release.
-  source = storage.download(release.tag, "doc/filters.texi")
-  next if source.nil?
 
-  p [release.version, source.size]
+  if not options.versions.nil?
+    matched = options.versions.any? do |v|
+      v == release.version || File.fnmatch?(v, release.version)
+    end
+
+    next if not matched
+  end
+
+  # Download and parse the source of the `filters.texi` documentation.
+  source =
+    begin
+      Source.new(storage, release)
+    rescue Source::SourceNotFound
+      next
+    end
+
+  pp [ release.version, source ]
 end
 
+
+__END__
+
+  source.groups[0].name
+  source.groups[0].items[0].name
+  source.groups[0].items[0].html

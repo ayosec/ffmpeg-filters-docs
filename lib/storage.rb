@@ -55,20 +55,25 @@ class Storage
     return nil if hash.nil? || hash.empty?
 
     # Blob data
-    cached_file = STORAGE_DIR.join("blob-#{hash}.gz")
+    gzcache(STORAGE_DIR.join("blob-#{hash}.gz")) do
+      STDERR.puts "Download blob #{hash} for #{tag}:#{path} ..."
+      @repository.blob_data(hash)
+    end
+  end
+
+  # Cache the result of the block in a gzipped file.
+  def gzcache(filename, &block)
+    cached_file = STORAGE_DIR.join(filename)
 
     if cached_file.exist?
       Zlib::GzipReader.open(cached_file) do |gz|
         gz.read
       end
     else
-      STDERR.puts "Download blob #{hash} for #{tag}:#{path} ..."
-      data = @repository.blob_data(hash)
-
+      data = block.call
       Zlib::GzipWriter.open(cached_file, 9) do |gz|
         gz.write(data)
       end
-
       data
     end
   end
