@@ -2,7 +2,11 @@
 
 require "optparse"
 
-Options = Struct.new(:versions, :output) do
+FFDocs::Options = Struct.new(
+  :versions,
+  :output,
+  :compress_css,
+) do
   def self.parse!
     options = self.new
 
@@ -12,7 +16,7 @@ Options = Struct.new(:versions, :output) do
         "--output DIRECTORY",
         "Directory where files will be written."
       ) do |dir|
-        parser.output = dir
+        options.output = dir
       end
 
       parser.on(
@@ -22,6 +26,14 @@ Options = Struct.new(:versions, :output) do
         "Each version can be a glob-like pattern, like '3.*'."
       ) do |versions|
         options.versions = versions.split(",")
+      end
+
+      parser.on(
+        "-C",
+        "--compress-css",
+        "Compress generated CSS files."
+      ) do
+        options.compress_css = true
       end
     end.parse!
 

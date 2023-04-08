@@ -1,15 +1,14 @@
 require "pathname"
 require "zlib"
 
-require_relative "repository"
-require_relative "version_tag"
+require_relative "source_docs"
 
-class Storage
+class FFDocs::Storage
 
-  STORAGE_DIR = Pathname.new(File.expand_path("../../target/storage", __FILE__))
+  STORAGE_DIR = Pathname.new(File.expand_path("../../../target/storage", __FILE__))
 
   def initialize
-    @repository = Repository.new
+    @repository = ::FFDocs::SourceDocs::Repository.new
 
     if not STORAGE_DIR.directory?
       STORAGE_DIR.mkpath
@@ -18,25 +17,27 @@ class Storage
   end
 
   # Return a list of tags for the latest release of each major version.
-  def releases
-    cached_file = STORAGE_DIR.join("releases")
+  memoize def releases
+    cached_file = STORAGE_DIR.join("release_tags.json")
 
-    if cached_file.exist?
-      r = cached_file.read.split.map {|v| VersionTag.parse(v) }
-      return r
-    end
+    # Get existing tags from the repository.
+    repository_tags =
+      if cached_file.exist?
+        JSON.parse(File.read(cached_file))
+      else
+        @repository.tags.to_a.tap {|t| cached_file.write(t.to_json) }
+      end
 
+    # Find newest tag for each major version.
     version_tags = {}
-    @repository.tags.each do |tag|
-      vt = VersionTag.parse(tag)
+    repository_tags.each do |tag|
+      vt = ::FFDocs::SourceDocs::VersionTag.parse(tag)
       next if vt.nil?
 
       version_tags[vt.major] = [ vt, version_tags[vt.major] ].compact.max
     end
 
-    r = version_tags.values.sort.reverse
-    cached_file.write(r.map(&:tag).join("\n"))
-    r
+    version_tags.values.sort.reverse
   end
 
   # Download a blob from a specific tag.

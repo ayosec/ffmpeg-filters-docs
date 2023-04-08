@@ -1,0 +1,24 @@
+%section.lists
+  - components.each do |component, groups|
+    .component
+      %h2= component
+
+      - groups.sort_by(&:media_type).each do |group|
+        != link_to_file group, group.media_type
+
+%section.metadata
+  %dl
+    %dt Release date
+    %dd= release.commit_date.split("T").first
+
+    %dt Code
+    %dd!= link_to commit_url(release.commit_hash), release.commit_hash[..8], class: "commit"
+
+
+- if changes = release_changes()
+  %section.changelog
+    %h2= "Changes in #{changes.version}"
+
+    %ul
+      - changes.items.each do |item|
+        %li= item

@@ -1,6 +1,8 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" />
 
+  <xsl:param name="show-item-title" />
+
   <!-- Links to official documentation -->
   <xsl:variable name="manuals">
     <link key="ffmpeg" url="https://ffmpeg.org/ffmpeg.html" />
@@ -13,7 +15,14 @@
 
   <xsl:template match="section">
     <section>
-      <h1 class="title"><xsl:value-of select="sectiontitle" /></h1>
+      <xsl:if test="$show-item-title">
+        <h1 class="title"><xsl:value-of select="sectiontitle" /></h1>
+      </xsl:if>
+      <xsl:if test="@ref-name">
+        <a>
+          <xsl:attribute name="name"><xsl:value-of select="@ref-name" /></xsl:attribute>
+        </a>
+      </xsl:if>
       <xsl:apply-templates />
     </section>
   </xsl:template>
@@ -22,6 +31,11 @@
     <section>
       <xsl:if test="sectiontitle/text() = 'Examples'">
         <xsl:attribute name="class">examples</xsl:attribute>
+      </xsl:if>
+      <xsl:if test="@ref-name">
+        <a>
+          <xsl:attribute name="name"><xsl:value-of select="@ref-name" /></xsl:attribute>
+        </a>
       </xsl:if>
       <h2><xsl:value-of select="sectiontitle" /></h2>
       <xsl:apply-templates />
@@ -34,6 +48,10 @@
 
   <xsl:template match="example/pre">
     <pre class="example"><xsl:apply-templates /></pre>
+  </xsl:template>
+
+  <xsl:template match="verbatim">
+    <pre class="verbatim"><xsl:apply-templates /></pre>
   </xsl:template>
 
   <xsl:template match="table[.//tableitem]">
@@ -77,6 +95,17 @@
 
   <!-- Inline items -->
 
+  <xsl:template match="ref[./xrefinfoname]">
+    <a>
+      <xsl:attribute name="href">
+        <xsl:text>label:</xsl:text>
+        <xsl:value-of select="@label" />
+      </xsl:attribute>
+
+      <xsl:apply-templates select="xrefinfoname" />
+    </a>
+  </xsl:template>
+
   <xsl:template match="ref[@manual]">
     <xsl:variable name="manual" select="@manual" />
     <a>
@@ -102,6 +131,13 @@
     </a>
   </xsl:template>
 
+  <xsl:template match="url/urefurl">
+    <a target="_blank">
+      <xsl:attribute name="href"><xsl:value-of select="." /></xsl:attribute>
+      <xsl:value-of select="." />
+    </a>
+  </xsl:template>
+
   <xsl:template match="code">
     <code><xsl:apply-templates /></code>
   </xsl:template>
@@ -117,6 +153,10 @@
 
   <xsl:template match="itemize[@commandarg='bullet']/listitem/prepend">
     <!-- Ignore &bullet; items -->
+  </xsl:template>
+
+  <xsl:template match="anchor">
+    <!-- Ignore -->
   </xsl:template>
 
 </xsl:stylesheet>

@@ -1,21 +1,34 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    faraday (2.7.4)
-      faraday-net_http (>= 2.0, < 3.1)
-      ruby2_keywords (>= 0.0.4)
-    faraday-net_http (3.0.2)
+    ethon (0.16.0)
+      ffi (>= 1.15.0)
+    ffi (1.15.5)
+    haml (6.1.1)
+      temple (>= 0.8.2)
+      thor
+      tilt
     nokogiri (1.14.2-x86_64-linux)
       racc (~> 1.4)
     racc (1.6.2)
-    ruby2_keywords (0.0.5)
+    rouge (4.1.0)
+    sassc (2.4.0)
+      ffi (~> 1.9)
+    temple (0.10.0)
+    thor (1.2.1)
+    tilt (2.1.0)
+    typhoeus (1.4.0)
+      ethon (>= 0.9.0)
 
 PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  faraday (~> 2.7)
+  haml (~> 6)
   nokogiri (~> 1)
+  rouge (~> 4.1)
+  sassc (~> 2)
+  typhoeus (~> 1.4)
 
 BUNDLED WITH
    2.4.6

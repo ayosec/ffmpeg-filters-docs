@@ -1,0 +1,15 @@
+@import "colors";
+@import "items";
+@import "layout";
+@import "list";
+@import "version_front";
+@import "version_matrix";
+
+:root {
+  --base-font-size: 12pt;
+}
+
+body {
+  font-family: sans-serif;
+  font-size: var(--base-font-size);
+}

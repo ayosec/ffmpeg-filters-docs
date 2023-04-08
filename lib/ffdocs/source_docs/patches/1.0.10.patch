@@ -1,0 +1,11 @@
+--- filters.texi.orig	2023-04-06 16:30:41.279088312 +0000
++++ filters.texi	2023-04-06 16:30:50.203618065 +0000
+@@ -4694,7 +4694,7 @@
+ @item streams, s
+ Specifies the streams to read. Several streams can be specified, separated
+ by "+". The source will then have as many outputs, in the same order. The
+-syntax is explained in the @ref{Stream specifiers} chapter. Two special
++syntax is explained in the Stream specifiers chapter. Two special
+ names, "dv" and "da" specify respectively the default (best suited) video
+ and audio stream. Default is "dv", or "da" if the filter is called as
+ "amovie".

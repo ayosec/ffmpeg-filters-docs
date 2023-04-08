@@ -1,0 +1,86 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: auto 1fr;
+
+  padding: 0;
+  margin: 0;
+
+  width: 100%;
+  min-height: 100vh;
+}
+
+// Grid.
+// TODO use @media to disable columns on mobile screens
+
+header {
+  grid-column: 1 / 3;
+  grid-row: 1 / 2;
+}
+
+nav {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+}
+
+main {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+}
+
+
+// Content.
+
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 1ex;
+
+  .links {
+    align-self: flex-end;
+  }
+}
+
+nav {
+  padding: 0;
+
+  .version, .current-version {
+    display: block;
+    padding: 1ex 2ex;
+  }
+
+  .current-version {
+    details {
+      margin-top: 0.5ch;
+      padding-left: 2ch;
+
+      summary {
+        cursor: pointer;
+      }
+
+      a, b {
+        display: block;
+        margin-left: 2ex;
+        margin-bottom: 0.3ex;
+      }
+    }
+  }
+}
+
+main {
+  margin: 1em;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 1ex;
+
+    .since-version {
+      align-self: flex-end;
+    }
+  }
+}

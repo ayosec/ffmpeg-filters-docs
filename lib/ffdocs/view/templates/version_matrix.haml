@@ -1,0 +1,21 @@
+%h1 Version Matrix
+
+%table.versions
+
+  %thead
+    %tr
+      %th
+      - releases.each do |release|
+        %th= release.major
+
+  %tbody
+    - items_list.each do |item|
+      %tr
+        %td
+          != link_to item.link_url, item.name
+
+        - releases.each do |release|
+          - if item.versions.include?(release.major)
+            %td.present{title: release.major} ✓
+          - else
+            %td

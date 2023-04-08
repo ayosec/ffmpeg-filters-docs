@@ -1,0 +1,34 @@
+- render_items_list = lambda do |groups|
+  - groups.each do |group|
+    - group.items.each do |item|
+      %dt!= link_to_file item, item.name
+      %dd= item.description
+
+.header
+  .breadcrumbs
+    - breadcrumbs.each.with_index do |bc, idx|
+      - if idx > 0
+        %span.separator= " ❭ "
+
+      - if bc.link
+        %a{href: bc.link}= bc.label
+
+.groups
+  - component_groups = groups.group_by(&:component)
+  - component_groups.each_pair do |component, groups|
+    - if component_groups.size > 1
+      %h2= component
+
+    %section
+      - media_type_groups = groups.group_by(&:media_type)
+      - if media_type_groups.size > 1
+        - media_type_groups.each_pair do |media_type, groups|
+          %details{open: true}
+            %summary= media_type
+
+            %dl.items
+              - render_items_list[groups]
+
+      - else
+        %dl.items
+          - render_items_list[groups]

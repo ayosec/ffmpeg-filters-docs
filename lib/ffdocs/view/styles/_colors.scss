@@ -1,0 +1,122 @@
+:root {
+  --main-green: #4cae4c; // from ffmpeg.org
+
+  --header-bg: #222;
+  --header-fg: #fff;
+
+  --since-version-color: #555;
+
+  --nav-bg: #222;
+  --nav-fg: #fff;
+
+  --nav-current-version-bg: #444;
+  --nav-current-version-gg: #000;
+
+  --breadcrumbs-main: #333;
+
+  --link-color: #0066CC;
+}
+
+header {
+  background: var(--header-bg);
+  border-bottom: 2px solid var(--main-green);
+  color: var(--header-fg);
+
+  .title {
+    font-size: 120%;
+    font-weight: bold;
+    color: var(--main-green);
+  }
+
+  .links a {
+    color: var(--header-fg);
+    text-decoration: none;
+    margin-left: 3ch;
+
+    &:hover {
+      color: var(--main-green);
+    }
+  }
+}
+
+nav {
+  background: var(--nav-bg);
+  color: var(--nav-fg);
+  border-right: 2px solid var(--main-green);
+
+  & > a {
+    font-family: monospace;
+
+    color: var(--main-green);
+    text-decoration: none;
+    border-bottom: 1px solid var(--main-green);
+
+    &:hover {
+      background: var(--main-green);
+      color: var(--nav-bg);
+    }
+  }
+
+  .current-version {
+    background: var(--nav-current-version-bg);
+    color: var(--nav-current-version-fg);
+
+    b {
+      font-family: monospace;
+    }
+
+    a {
+      font-family: monospace;
+
+      color: var(--main-green);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+main {
+
+  .header {
+    border-bottom: 1px solid var(--breadcrumbs-main);
+
+    .breadcrumbs {
+      font-size: 120%;
+
+      span.separator {
+        opacity: 0.5;
+      }
+
+      a, b, span.separator {
+        color: var(--breadcrumbs-main);
+        text-decoration: none;
+      }
+
+      a:hover {
+        color: var(--main-green);
+      }
+    }
+
+    .since-version {
+      color: var(--since-version-color);
+      font-size: 90%;
+
+      span {
+        text-decoration: dotted underline;
+      }
+    }
+  }
+
+  a {
+    color: var(--link-color);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+}

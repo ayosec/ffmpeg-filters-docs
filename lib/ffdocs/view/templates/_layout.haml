@@ -1,0 +1,51 @@
+!!! 5
+
+%html
+  %head
+    %meta(charset="UTF-8")
+    %meta(name="viewport" content="width=device-width, initial-scale=1.0")
+
+    - if md = meta_description
+      %meta(name="description" content=md)
+
+    - if mk = meta_keywords
+      %meta(name="keywords" content=mk)
+
+    %link(rel="stylesheet" href=css_path)
+
+    %title= page_title
+
+  %body
+    %header
+      .title= "FFmpeg #{release ? release.version : ""}"
+      .links
+        != link_to_file :version_matrix, "Version Matrix"
+        != link_to "https://TODO", "Source"
+
+    %nav
+      - releases.each do |it_release|
+        - if release == it_release
+          .current-version
+            %b= it_release.version
+
+            - if item
+              - item_group_id = item.group.object_id
+              - nav_item_tree.each do |component, groups|
+                %details{ open: groups.any? {|g| g[1].any? {|g| g.object_id == item_group_id } } }
+                  %summary= component
+
+                  - groups.each do |media_type, groups|
+                    %details{ open: groups.any? {|g| g.object_id == item_group_id } }
+                      %summary= media_type
+
+                      - groups.flat_map(&:items).each do |other|
+                        - if other.object_id == item.object_id
+                          %b= item.name
+                        - else
+                          != link_to_file other, other.name
+
+        - else
+          != link_to_file it_release, it_release.version, class: "version"
+
+    %main{class: main_class}
+      != main_body
