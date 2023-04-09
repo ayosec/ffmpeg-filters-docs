@@ -3,6 +3,13 @@
   --list-items-sep: #ccc;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --list-header: #ccc;
+    --list-items-sep: #777;
+  }
+}
+
 main.list {
   h1, h2 {
     color: var(--list-header);

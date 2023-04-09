@@ -14,6 +14,18 @@
   --item-btncopy-bg: #ccc;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --item-header-color: #eee;
+
+    --item-table-border: #777;
+    --item-table-term-fg: #fff;
+    --item-table-term-bg: #555;
+
+    --item-span-code: #91cf91;
+  }
+}
+
 main.item section {
   h1, h2, h3 {
     color: var(--item-header-color);

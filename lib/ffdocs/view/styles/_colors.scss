@@ -10,11 +10,34 @@
   --nav-fg: #fff;
 
   --nav-current-version-bg: #444;
-  --nav-current-version-gg: #000;
+  --nav-current-version-fg: #fff;
 
   --breadcrumbs-main: #333;
 
   --link-color: #0066CC;
+}
+
+@media (prefers-color-scheme: dark) {
+
+  :root {
+    --header-bg: #000;
+    --header-fg: #aaa;
+
+    --since-version-color: #ccc;
+
+    --nav-bg: #111;
+    --nav-fg: #aaa;
+
+    --breadcrumbs-main: #ddd;
+
+    --link-color: #abf;
+
+    body {
+      color: #eee;
+      background: #353535;
+    }
+  }
+
 }
 
 header {

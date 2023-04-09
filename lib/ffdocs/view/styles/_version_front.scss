@@ -4,6 +4,14 @@
   --versionfront-metadata-border: #ccc;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --versionfront-header: #ccc;
+    --versionfront-lists-link: $link-color;
+    --versionfront-metadata-border: #555;
+  }
+}
+
 main.version-front {
   display: grid;
   grid-template-columns: 1fr auto;
