@@ -20,7 +20,8 @@
       .title= "FFmpeg #{release ? release.version : ""}"
       .links
         != link_to_file :version_matrix, "Version Matrix"
-        != link_to "https://TODO", "Source"
+        - if project_url
+          != link_to project_url, "Source"
 
     %nav
       - releases.each do |it_release|

@@ -5,6 +5,7 @@ require "optparse"
 FFDocs::Options = Struct.new(
   :versions,
   :output,
+  :project_url,
   :compress_css,
 ) do
   def self.parse!
@@ -26,6 +27,14 @@ FFDocs::Options = Struct.new(
         "Each version can be a glob-like pattern, like '3.*'."
       ) do |versions|
         options.versions = versions.split(",")
+      end
+
+      parser.on(
+        "-U URL",
+        "--project-url URL",
+        "URL for the fmpeg-filters-docs project"
+      ) do |url|
+        options.project_url = url
       end
 
       parser.on(

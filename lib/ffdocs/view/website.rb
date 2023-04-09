@@ -34,6 +34,7 @@ module FFDocs::View
     attr_reader :main_css_path, :releases
 
     def initialize(options)
+      @project_url = options.project_url
       @output = Pathname.new(options.output || DEFAULT_OUTPUT_DIR)
 
       @output.mkdir if not @output.directory?
@@ -206,6 +207,7 @@ module FFDocs::View
 
       ctx = RenderLayoutContext.new
       ctx.website = self
+      ctx.project_url = @project_url
       ctx.item = item
       ctx.path = path
       ctx.page_title = page_title
@@ -277,6 +279,7 @@ module FFDocs::View
 
   RenderLayoutContext = Struct.new(
     :website,
+    :project_url,
     :item,
     :page_title,
     :path,
