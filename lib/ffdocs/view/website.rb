@@ -133,9 +133,17 @@ module FFDocs::View
         ::FFDocs::View::VersionMatrixRenderer.new(self).render
       end
 
+      # Use the index for the newest release as the main index.
+      release_for_main_index = @releases.map(&:release).max
+
       @releases.each do |rd|
         workers.launch rd.release.version do
-          ::FFDocs::View::ReleaseRenderer.new(self, rd.release, rd.source).render
+          renderer = ::FFDocs::View::ReleaseRenderer.new(self, rd.release, rd.source)
+          renderer.render
+
+          if rd.release == release_for_main_index
+            renderer.render_version_index(@output.join("index.html"))
+          end
         end
       end
 

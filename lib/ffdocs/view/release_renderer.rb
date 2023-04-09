@@ -25,8 +25,8 @@ module FFDocs::View
       end
     end
 
-    private def render_version_index
-      path = website.path_for(release).join("index.html")
+    def render_version_index(path = nil)
+      path ||= website.path_for(release).join("index.html")
 
       ctx = ::FFDocs::View::RenderFrontVersionContext.new(self, path)
       main_body = website.version_front_template.render(ctx)
