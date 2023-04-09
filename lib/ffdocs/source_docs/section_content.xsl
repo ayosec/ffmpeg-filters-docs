@@ -18,11 +18,9 @@
       <xsl:if test="$show-item-title">
         <h1 class="title"><xsl:value-of select="sectiontitle" /></h1>
       </xsl:if>
-      <xsl:if test="@ref-name">
-        <a>
-          <xsl:attribute name="name"><xsl:value-of select="@ref-name" /></xsl:attribute>
-        </a>
-      </xsl:if>
+
+      <xsl:call-template name="direct-link-anchor" />
+
       <xsl:apply-templates />
     </section>
   </xsl:template>
@@ -32,11 +30,9 @@
       <xsl:if test="sectiontitle/text() = 'Examples'">
         <xsl:attribute name="class">examples</xsl:attribute>
       </xsl:if>
-      <xsl:if test="@ref-name">
-        <a>
-          <xsl:attribute name="name"><xsl:value-of select="@ref-name" /></xsl:attribute>
-        </a>
-      </xsl:if>
+
+      <xsl:call-template name="direct-link-anchor" />
+
       <h2><xsl:value-of select="sectiontitle" /></h2>
       <xsl:apply-templates />
     </section>
@@ -157,6 +153,30 @@
 
   <xsl:template match="anchor">
     <!-- Ignore -->
+  </xsl:template>
+
+  <!-- Shared templates -->
+
+  <xsl:template name="direct-link-anchor">
+    <xsl:variable name="ref-name">
+      <xsl:choose>
+        <xsl:when test="@ref-name">
+          <xsl:value-of select="@ref-name" />
+        </xsl:when>
+
+        <xsl:otherwise>
+          <xsl:value-of select="translate(normalize-space(sectiontitle), ' #/:,', '')" />
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
+    <a class="direct-link">
+      <xsl:attribute name="name"><xsl:value-of select="$ref-name" /></xsl:attribute>
+      <xsl:attribute name="href">
+        <xsl:text>#</xsl:text>
+        <xsl:value-of select="$ref-name" />
+      </xsl:attribute>
+    </a>
   </xsl:template>
 
 </xsl:stylesheet>

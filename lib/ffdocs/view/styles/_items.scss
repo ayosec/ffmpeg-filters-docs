@@ -102,4 +102,11 @@ main.item section {
       }
     }
   }
+
+  &:hover > a.direct-link::after {
+    content: "#";
+    float: right;
+    font-size: calc(var(--base-font-size) * 1.5);
+    color: var(--item-header-color);
+  }
 }
