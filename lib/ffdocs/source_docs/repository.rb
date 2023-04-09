@@ -132,7 +132,7 @@ class FFDocs::SourceDocs::Repository
       req = make_request(url, :get, headers)
       req.on_complete do |response|
         if not response.success?
-          ::FFDocs.log.error "Request failed: #{response.status}\n#{response.body}"
+          ::FFDocs.log.error "Request failed: #{response.status_message}\n#{response.response_body}"
           raise RequestFailed.new(response)
         end
 
