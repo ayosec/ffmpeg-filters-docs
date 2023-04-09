@@ -57,7 +57,7 @@ class FFDocs::Storage
 
     # Blob data
     gzcache(STORAGE_DIR.join("blob-#{hash}.gz")) do
-      STDERR.puts "Download blob #{hash} for #{tag}:#{path} ..."
+      ::FFDocs.log.info "Download blob #{hash} for #{tag}:#{path} ..."
       @repository.blob_data(hash)
     end
   end

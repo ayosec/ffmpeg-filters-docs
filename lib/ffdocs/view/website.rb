@@ -116,7 +116,7 @@ module FFDocs::View
               if updated_href
                 anchor["href"] = updated_href
               else
-                STDERR.puts "Could not resolve link for #{anchor}."
+                ::FFDocs.log.error "Could not resolve link for #{anchor}."
               end
             end
           end
@@ -264,6 +264,8 @@ module FFDocs::View
           wait_one()
         end
 
+        ::FFDocs.log.info "Launching worker for #{label} ..."
+
         pid = fork(&block)
         @pids[pid] = label
       end
@@ -274,7 +276,7 @@ module FFDocs::View
         return if label.nil?
 
         if not $?.success?
-          STDERR.puts "Worker for #{label.inspect} failed."
+          ::FFDocs.log.error "Worker for #{label.inspect} failed."
           @failures << label
         end
       end

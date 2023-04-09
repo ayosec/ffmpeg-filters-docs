@@ -66,7 +66,7 @@ module FFDocs::SourceDocs
           end
         end
 
-        STDERR.puts "Converting texinfo source to XML for #{release.tag} ..."
+        ::FFDocs.log.info "Converting texinfo source to XML for #{release.tag} ..."
         IO.popen(%w(makeinfo --xml --no-split --output=-), "r+") do |io|
           io.write(source)
           io.close_write
@@ -83,6 +83,8 @@ module FFDocs::SourceDocs
     # To apply the entities, it downloads the DTD and re-parse the file using a
     # path to a local file.
     private def parse_source(source)
+      ::FFDocs.log.info "Parsing source for #{@release.version} ..."
+
       doc = Nokogiri::XML.parse(source)
 
       if dtd = doc.internal_subset
@@ -211,7 +213,7 @@ module FFDocs::SourceDocs
         if response.success?
           file.write(response.body)
         else
-          STDERR.puts "DTD failed: #{url}"
+          ::FFDocs.log.error "DTD failed: #{url}"
         end
       end
 

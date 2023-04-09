@@ -89,6 +89,7 @@ class FFDocs::SourceDocs::Repository
   end
 
   private def make_request(uri, http_method, headers)
+    ::FFDocs.log.info "[#{http_method.to_s.upcase}] #{uri}"
     url = case uri
           when /\Ahttps:/
             uri
@@ -116,7 +117,7 @@ class FFDocs::SourceDocs::Repository
   private def get(url, headers: {})
     response = make_request(url, :get, headers).run
     if not response.success?
-      STDERR.puts "Request failed: #{response.status}\n#{response.body}"
+      ::FFDocs.log.error "Request failed: #{response.status}\n#{response.body}"
       raise RequestFailed.new(response)
     end
 
@@ -131,7 +132,7 @@ class FFDocs::SourceDocs::Repository
       req = make_request(url, :get, headers)
       req.on_complete do |response|
         if not response.success?
-          STDERR.puts "Request failed: #{response.status}\n#{response.body}"
+          ::FFDocs.log.error "Request failed: #{response.status}\n#{response.body}"
           raise RequestFailed.new(response)
         end
 
