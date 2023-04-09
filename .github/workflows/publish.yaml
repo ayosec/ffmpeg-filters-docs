@@ -40,12 +40,10 @@ jobs:
           bundle exec ./ffmpeg-filters-docs \
             --project-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload website
+        uses: actions/upload-pages-artifact@v1
         with:
-          name: github-pages
           path: target/website
-          if-no-files-found: error
 
   deploy:
     needs: build
@@ -58,4 +56,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v2
