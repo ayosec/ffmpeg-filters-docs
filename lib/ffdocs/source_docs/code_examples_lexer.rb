@@ -20,6 +20,11 @@ class CodeExamplesLexer < Rouge::RegexLexer
 
     if @initial_state
       goto @initial_state
+
+      # If the initial state is not :root, we assume that the whole code is
+      # surrounded by a quote. Thus, spaces will not interpreted as the end
+      # of a CLI argument.
+      @delimiters[:all] = 0
     end
   end
 
@@ -93,7 +98,15 @@ class CodeExamplesLexer < Rouge::RegexLexer
     mixin :link_label
     mixin :filters_separator
 
-    rule /\w+/, Name::Function
+    rule /\w+/ do
+      token Name::Function
+
+      push do
+        rule /@\w+/, Name::Label, :pop!
+
+        rule(//) { pop! }
+      end
+    end
 
     rule /\=/, Operator, :filter_params
   end
