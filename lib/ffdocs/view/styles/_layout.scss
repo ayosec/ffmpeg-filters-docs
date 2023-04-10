@@ -99,19 +99,14 @@ main {
   .header {
     padding-bottom: 1ex;
 
-    @media screen and (min-width: 15cm) {
-      display: flex;
-      justify-content: space-between;
+    display: flex;
+    flex-wrap: wrap-reverse;
+    column-gap: 2ch;
+    row-gap: 0.5ch;
+    justify-content: space-between;
 
-      .since-version {
-        align-self: flex-end;
-      }
-    }
-
-    @media screen and (max-width: 15cm) {
-      .since-version {
-        padding-top: 1ex;
-      }
+    .since-version {
+      align-self: flex-end;
     }
   }
 }
