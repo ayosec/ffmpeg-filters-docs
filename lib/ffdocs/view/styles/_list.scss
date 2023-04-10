@@ -38,10 +38,13 @@ main.list {
   }
 
   dl.items {
-    display: grid;
-    grid-template-columns: min-content 1fr;
 
-    margin-left: 1em;
+    @media screen and (min-width: 15cm) {
+      display: grid;
+      grid-template-columns: min-content 1fr;
+
+      margin-left: 1em;
+    }
 
     a {
       text-decoration: none;
@@ -61,6 +64,11 @@ main.list {
 
     dt {
       min-width: 20ch;
+
+      @media screen and (max-width: 15cm) {
+        border: 0;
+        padding-bottom: 0;
+      }
     }
   }
 }

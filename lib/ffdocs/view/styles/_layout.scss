@@ -15,7 +15,6 @@ body {
 }
 
 // Grid.
-// TODO use @media to disable columns on mobile screens
 
 header {
   grid-column: 1 / 3;
@@ -32,6 +31,29 @@ main {
   grid-row: 2 / 3;
 }
 
+@media screen and (max-width: 20cm) {
+
+  body {
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: auto;
+  }
+
+  header {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+
+  nav {
+    grid-column: 1 / 2;
+    grid-row: 3 / 4;
+  }
+
+  main {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+  }
+
+}
 
 // Content.
 
