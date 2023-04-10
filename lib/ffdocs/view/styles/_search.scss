@@ -1,0 +1,49 @@
+:root {
+  --search-fg: #000;
+  --search-bg: #ccc;
+}
+
+nav {
+  input.search {
+    float: right;
+
+    // Hide everything when it does not have the focus.
+    color: transparent;
+    background: transparent;
+    border: 0;
+
+    // Icon to focus the input.
+    cursor: pointer;
+    width: 3ch;
+    min-height: 3ch;
+
+    background-image: svg-file(search);
+    background-size: 3ch;
+    background-position: center right;
+    background-repeat: no-repeat;
+
+    // Show the input if it has the focus, or its value is not empty.
+    &:focus, &:not(:placeholder-shown) {
+      display: block;
+      float: unset;
+      margin-bottom: 1ch;
+
+      text-align: center;
+      width: 100%;
+
+      color: var(--search-fg);
+      background: var(--search-bg);
+
+      border: 1px solid var(--search-fg);
+      outline: none;
+    }
+
+    &::placeholder {
+      text-align: left;
+    }
+
+    &:not(:focus)::placeholder {
+      color: transparent;
+    }
+  }
+}

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "base64"
 require "etc"
 require "haml"
 require "sassc"
@@ -15,7 +16,7 @@ module FFDocs::View
 
     CSS_SOURCE = File.expand_path("../styles/main.scss", __FILE__)
 
-    JS_SOURCE_FILES = %w(clipboard).map do |name|
+    JS_SOURCE_FILES = %w(clipboard nav-search).map do |name|
       File.expand_path("../javascript/#{name}.js", __FILE__)
     end
 
@@ -163,6 +164,7 @@ module FFDocs::View
     private def init_css!(options)
       opts = {
         style: options.compress_css ? :compressed : :expanded,
+        functions: SassFunctions,
         filename: CSS_SOURCE,
       }
 
@@ -334,4 +336,17 @@ module FFDocs::View
         website.main_js_path.relative_path_from(path.parent)
     end
   end
+
+  module SassFunctions
+    # Implementation for the `svg-file()` function.
+    #
+    # It reads a file under the `svg` directory, and embeds its contents
+    # encoded in Base64.
+    def svg_file(x)
+      svg_file = File.expand_path("../svg/#{x}.svg", __FILE__)
+      enc = Base64.strict_encode64(File.read(svg_file))
+      SassC::Script::Value::String.new(%[url("data:image/svg+xml;base64,#{enc}")])
+    end
+  end
+
 end
