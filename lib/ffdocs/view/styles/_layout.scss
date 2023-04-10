@@ -97,12 +97,21 @@ main {
   margin: 1em;
 
   .header {
-    display: flex;
-    justify-content: space-between;
     padding-bottom: 1ex;
 
-    .since-version {
-      align-self: flex-end;
+    @media screen and (min-width: 15cm) {
+      display: flex;
+      justify-content: space-between;
+
+      .since-version {
+        align-self: flex-end;
+      }
+    }
+
+    @media screen and (max-width: 15cm) {
+      .since-version {
+        padding-top: 1ex;
+      }
     }
   }
 }
