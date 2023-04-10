@@ -15,6 +15,10 @@ module FFDocs::View
 
     CSS_SOURCE = File.expand_path("../styles/main.scss", __FILE__)
 
+    JS_SOURCE_FILES = %w(clipboard).map do |name|
+      File.expand_path("../javascript/#{name}.js", __FILE__)
+    end
+
     ReleaseData = Struct.new(:release, :source)
 
     WebsiteFile = Struct.new(:release, :component, :media_type, :item, :path)
@@ -31,7 +35,7 @@ module FFDocs::View
 
     class RenderFailed < StandardError; end
 
-    attr_reader :main_css_path, :releases
+    attr_reader :main_css_path, :main_js_path, :releases
 
     def initialize(options)
       @project_url = options.project_url
@@ -41,6 +45,7 @@ module FFDocs::View
       @output.join("CACHEDIR.TAG").write("")
 
       init_css!(options)
+      init_js!()
 
       @releases = []
       @website_files = {}
@@ -165,6 +170,21 @@ module FFDocs::View
 
       @main_css_path = @output.join(File.basename(CSS_SOURCE, ".scss") + ".css")
       @main_css_path.write(css)
+    end
+
+    # Combine the JS files.
+    private def init_js!
+      @main_js_path = @output.join("main.js")
+
+      output = @main_js_path.open("w")
+      output.write(%["use strict";\n]);
+
+      JS_SOURCE_FILES.each do |source|
+        output.write("\n// #{File.basename(source)}\n")
+        output.write(File.read(source))
+      end
+
+      output.close
     end
 
     # Compute the path for a specific item in the website.
@@ -302,10 +322,16 @@ module FFDocs::View
     include ::FFDocs::View::WebsiteHelpers
 
     CSS_HREF_CACHE = {}
+    JS_SRC_CACHE = {}
 
     def css_path
       CSS_HREF_CACHE[path.parent] ||=
         website.main_css_path.relative_path_from(path.parent)
+    end
+
+    def js_path
+      JS_SRC_CACHE[path.parent] ||=
+        website.main_js_path.relative_path_from(path.parent)
     end
   end
 end
