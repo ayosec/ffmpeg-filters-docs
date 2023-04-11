@@ -31,7 +31,7 @@ class CodeExamplesLexer < Rouge::RegexLexer
   CLI_ARGUMENT = Name::Tag
 
   state :root do
-    rule /(ffplay|ffmpeg|ffprobe)\b/ do |m|
+    rule /(?:\.\/)?(ffplay|ffmpeg|ffprobe)\b/ do |m|
       @current_program = m[1]
       token Name::Namespace
     end
@@ -76,6 +76,8 @@ class CodeExamplesLexer < Rouge::RegexLexer
 
     rule /\s+/, Text::Whitespace
 
+    rule /\\\n/, Literal::String::Escape
+
     rule(//) do
       # Free arguments.
       #
@@ -87,7 +89,7 @@ class CodeExamplesLexer < Rouge::RegexLexer
       else
         push do
           mixin :shell_word
-          rule /./, Text
+          rule /./m, Text
         end
       end
     end
@@ -136,7 +138,7 @@ class CodeExamplesLexer < Rouge::RegexLexer
 
     rule /:/, Operator, :pop!
 
-    rule /./, Text
+    rule /./m, Text
   end
 
   state :link_label do
@@ -182,7 +184,7 @@ class CodeExamplesLexer < Rouge::RegexLexer
       token Literal::String::Escape
 
       push do
-        rule /./, Literal::String::Escape, :pop!
+        rule /./m, Literal::String::Escape, :pop!
       end
     end
   end
