@@ -1,4 +1,4 @@
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" />
 
   <xsl:param name="show-item-title" />
@@ -13,8 +13,21 @@
 
   <!-- Block items -->
 
+  <xsl:template match="texinfo">
+    <doc><xsl:apply-templates /></doc>
+  </xsl:template>
+
+  <xsl:template match="chapter">
+    <group>
+      <xsl:attribute name="title" select="sectiontitle" />
+      <xsl:apply-templates />
+    </group>
+  </xsl:template>
+
   <xsl:template match="section">
     <section>
+      <xsl:attribute name="data-title" select="sectiontitle" />
+
       <xsl:if test="$show-item-title">
         <h1 class="title"><xsl:value-of select="sectiontitle" /></h1>
       </xsl:if>
@@ -50,17 +63,28 @@
     <pre class="verbatim"><xsl:apply-templates /></pre>
   </xsl:template>
 
-  <xsl:template match="table[.//tableitem]">
-    <!-- A table with <tableitem> elements is rendered as a description list -->
+  <xsl:template match="table[.//tableitem/*]">
+    <!--
+      A table with non-empty <tableitem> elements is rendered as a description list.
+
+      Adjacent <tableentry> with no <tableitem> are joined in a single <dt>.
+    -->
     <dl>
       <xsl:attribute name="class">
         <xsl:value-of select="@commandarg" />
       </xsl:attribute>
 
-      <xsl:for-each select="tableentry">
-        <dt><xsl:apply-templates select="tableterm" /></dt>
-        <dd><xsl:apply-templates select="tableitem" /></dd>
-      </xsl:for-each>
+      <xsl:for-each-group select="tableentry" group-ending-with="*[./tableitem]">
+        <dt>
+          <xsl:for-each select="current-group()">
+            <xsl:if test="position() gt 1">
+              <span class="separator"><xsl:text>,&#32;</xsl:text></span>
+            </xsl:if>
+            <xsl:apply-templates select="tableterm" />
+          </xsl:for-each>
+        </dt>
+        <dd><xsl:apply-templates select="current-group()/tableitem" /></dd>
+      </xsl:for-each-group>
     </dl>
   </xsl:template>
 
@@ -106,9 +130,7 @@
     <xsl:variable name="manual" select="@manual" />
     <a>
       <xsl:attribute name="href">
-        <xsl:value-of
-          xmlns:libxslt="http://xmlsoft.org/XSLT/namespace"
-          select="libxslt:node-set($manuals)/link[@key=$manual]/@url" />
+        <xsl:value-of select="$manuals/link[@key=$manual]/@url" />
         <xsl:text>#</xsl:text>
         <xsl:value-of select="@label" />
       </xsl:attribute>
@@ -176,6 +198,7 @@
         <xsl:text>#</xsl:text>
         <xsl:value-of select="$ref-name" />
       </xsl:attribute>
+      <xsl:text>#</xsl:text>
     </a>
   </xsl:template>
 

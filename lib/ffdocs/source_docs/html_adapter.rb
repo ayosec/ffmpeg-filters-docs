@@ -7,8 +7,7 @@ module FFDocs::SourceDocs
 
     HTMLData = Struct.new(:html, :anchors)
 
-    def process(html)
-      doc = Nokogiri::HTML.parse(html)
+    def process(doc)
       doc = stylize_code_blocks(doc)
 
       anchors = doc.search("a[name]").map {|anchor| anchor["name"] }

@@ -130,12 +130,17 @@ main.item section {
     }
   }
 
+  a.direct-link {
+    float: right;
+    color: transparent;
+    background: transparent;
+    font-size: calc(var(--base-font-size) * 1.5);
+  }
+
   @media (pointer: fine) {
-    &:hover > a.direct-link::after {
-      content: "#";
-      float: right;
-      font-size: calc(var(--base-font-size) * 1.5);
+    &:hover > a.direct-link {
       color: var(--item-header-color);
     }
   }
+
 }

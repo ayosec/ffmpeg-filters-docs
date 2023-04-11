@@ -24,6 +24,11 @@ jobs:
           ruby-version: "3.2.2"
           bundler-cache: true
 
+      - uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: "17"
+
       - name: Cache storage data
         uses: actions/cache@v3
         with:
@@ -35,7 +40,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -ex
-          sudo apt-get install -y texinfo
+          sudo apt-get install -y libsaxonb-java texinfo
 
           bundle exec ./ffmpeg-filters-docs \
             --project-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
