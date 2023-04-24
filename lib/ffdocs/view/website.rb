@@ -202,20 +202,23 @@ module FFDocs::View
 
       @website_files[obj_key] ||=
         case obj
-        when ::FFDocs::SourceDocs::VersionTag
+        in ::FFDocs::SourceDocs::VersionTag
           @output.join(InvalidPathName.check!(obj.version))
 
-        when ::FFDocs::SourceDocs::Group
+        in ::FFDocs::SourceDocs::Group
           [ obj.component, obj.media_type ].
             map {|part| InvalidPathName.check!(part.gsub(" ", "-")) }.
             reduce(path_for(obj.release)) {|a, b| a.join(b) }
 
-        when ::FFDocs::SourceDocs::Item
+        in ::FFDocs::SourceDocs::Item
           path_for(obj.group).
             join(InvalidPathName.check!(obj.name) + ".html")
 
-        when :version_matrix
+        in :version_matrix
           @output.join("version-matrix.html")
+
+        in [ :changelog, version ]
+          path_for(version).join("changelog.html")
 
         else
           raise ArgumentError.new("Invalid object for #path_for: #{obj.inspect}")
@@ -263,6 +266,10 @@ module FFDocs::View
 
     memoize def version_matrix_template
       compile_template("version_matrix")
+    end
+
+    memoize def version_changelog_template
+      compile_template("version_changelog")
     end
 
     private def compile_template(name)

@@ -1,0 +1,17 @@
+.header
+  .breadcrumbs
+    != link_to_file release, release.version
+
+    %span.separator= " ❭ "
+
+    %b Changes
+
+- changes = release_changes()
+- if not changes.empty?
+  %section.changelog
+    - changes.each do |entry|
+      %h1= "Changes in #{entry.version}"
+
+      %ul
+        - entry.items.each do |item|
+          %li= item

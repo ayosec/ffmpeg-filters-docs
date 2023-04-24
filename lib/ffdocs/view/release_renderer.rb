@@ -10,6 +10,7 @@ module FFDocs::View
 
     def render
       render_version_index
+      render_version_changelog
 
       source.groups.
         group_by(&:component).
@@ -37,6 +38,23 @@ module FFDocs::View
         release: release,
         page_title: "FFmpeg #{release.version}",
         main_class: "version-front",
+      )
+
+      path.write(html)
+    end
+
+    def render_version_changelog
+      path = website.path_for([ :changelog, release ])
+
+      ctx = ::FFDocs::View::RenderChangelogContext.new(self, path)
+      main_body = website.version_changelog_template.render(ctx)
+
+      html = website.with_layout(
+        main_body,
+        path: path,
+        release: release,
+        page_title: "FFmpeg #{release.version}",
+        main_class: "version-changelog",
       )
 
       path.write(html)
@@ -165,24 +183,9 @@ module FFDocs::View
     end
   end
 
+
   RenderFrontVersionContext = Struct.new(:renderer, :path) do
     include ::FFDocs::View::WebsiteHelpers
-
-    def website
-      renderer.website
-    end
-
-    def release
-      renderer.release
-    end
-
-    def release_changes
-      changelog = ::FFDocs::SourceDocs::ChangeLog.new(renderer.source.storage)
-      changelog.latest.find do |change|
-        parts = change.version.split(".")
-        parts == renderer.release.version.split(".").take(parts.size)
-      end
-    end
 
     def commit_url(hash)
       [ FFMPEG_COMMITS_URL_PREFIX, hash ].join
@@ -192,6 +195,25 @@ module FFDocs::View
       cs = renderer.source.groups.group_by(&:component).to_a
       cs.sort_by(&:first)
     end
+  end
+
+
+  RenderChangelogContext = Struct.new(:renderer, :path) do
+    include ::FFDocs::View::WebsiteHelpers
+
+    def release_changes
+      versions = []
+      changelog = ::FFDocs::SourceDocs::ChangeLog.new(renderer.source.storage)
+      changelog.latest.each do |entry|
+        major = entry.version.split(".").take(2).join(".")
+        if major == renderer.release.major
+          versions << entry
+        end
+      end
+
+      versions.reverse
+    end
+
   end
 
 end

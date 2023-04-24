@@ -3,6 +3,14 @@ module FFDocs::View
 
     FILE_LINKS_CACHE = {}
 
+    def website
+      renderer.website
+    end
+
+    def release
+      renderer.release
+    end
+
     def link_to_file(ref, label, extra_attrs = {})
       path_parent = path.parent
       cache_key = [path_parent, ref.object_id, label, extra_attrs]
