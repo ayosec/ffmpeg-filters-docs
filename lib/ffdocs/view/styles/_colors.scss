@@ -97,6 +97,11 @@ nav {
       &:hover {
         text-decoration: underline;
       }
+
+      &.selected {
+        color: var(--nav-bg);
+        background: var(--main-green);
+      }
     }
   }
 }

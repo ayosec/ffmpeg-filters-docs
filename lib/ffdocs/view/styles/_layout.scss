@@ -85,11 +85,17 @@ nav {
       }
 
       a, b {
-        display: block;
-        margin-left: 2ex;
-        margin-bottom: 0.3ex;
+        &:not(.hidden) {
+          display: block;
+          margin-left: 2ex;
+          margin-bottom: 0.3ex;
+        }
       }
     }
+  }
+
+  .hidden {
+    display: none;
   }
 }
 
