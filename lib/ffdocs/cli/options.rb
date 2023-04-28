@@ -4,6 +4,7 @@ require "optparse"
 
 FFDocs::Options = Struct.new(
   :compress_css,
+  :max_workers,
   :no_highlighter,
   :output,
   :project_url,
@@ -19,6 +20,16 @@ FFDocs::Options = Struct.new(
         "Compress generated CSS files."
       ) do
         options.compress_css = true
+      end
+
+      parser.on(
+        "-W COUNT",
+        "--max-workers COUNT",
+        "Maximum number of workers for writing the HTML files.",
+        "Set to 0 to disable forking.",
+        Integer,
+      ) do |n|
+        options.max_workers = n
       end
 
       parser.on(

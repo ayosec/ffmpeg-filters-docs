@@ -40,6 +40,7 @@ module FFDocs::View
 
     def initialize(options)
       @project_url = options.project_url
+      @max_workers = options.max_workers
       @output = Pathname.new(options.output || DEFAULT_OUTPUT_DIR)
 
       @output.mkdir if not @output.directory?
@@ -131,7 +132,7 @@ module FFDocs::View
     end
 
     def render
-      workers = Workers.new
+      workers = Workers.new(@max_workers)
 
       @releases.freeze
 
@@ -283,13 +284,19 @@ module FFDocs::View
 
       attr_reader :failures
 
-      def initialize
+      def initialize(max_workers = nil)
         @pids = {}
         @failures = []
+        @max_workers = max_workers || NPROCS
       end
 
       def launch(label, &block)
-        while @pids.size >= NPROCS
+        if @max_workers == 0
+          block.call
+          return
+        end
+
+        while @pids.size >= @max_workers
           wait_one()
         end
 
