@@ -32,7 +32,7 @@ module FFDocs::CLI
         # Download and parse the source of the `filters.texi` documentation.
         source =
           begin
-            FFDocs::SourceDocs::Collection.new(storage, release)
+            FFDocs::SourceDocs::Collection.new(options, storage, release)
           rescue FFDocs::SourceDocs::SourceNotFound
             next
           end

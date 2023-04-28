@@ -7,8 +7,14 @@ module FFDocs::SourceDocs
 
     HTMLData = Struct.new(:html, :anchors)
 
+    def initialize(options)
+      @options = options
+    end
+
     def process(doc)
-      doc = stylize_code_blocks(doc)
+      if not @options.no_highlighter
+        doc = stylize_code_blocks(doc)
+      end
 
       anchors = doc.search("a[name]").map {|anchor| anchor["name"] }
 

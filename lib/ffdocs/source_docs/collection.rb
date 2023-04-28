@@ -35,8 +35,8 @@ module FFDocs::SourceDocs
 
     attr_reader :storage, :groups, :anchors
 
-    def initialize(storage, release)
-      @html_adapter = HTMLAdapter.new
+    def initialize(options, storage, release)
+      @html_adapter = HTMLAdapter.new(options)
       @storage = storage
       @release = release
 
