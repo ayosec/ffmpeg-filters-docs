@@ -7,12 +7,12 @@
         != link_to_file group, group.media_type
 
 %section.metadata
-  .release-date
-    %b Release date
-    %time= release.commit_date.split("T").first
-
   .source
-    != link_to commit_url(release.commit_hash), "Source"
+    != link_to commit_url(release.commit_hash), "Source code"
 
   .changelog
     != link_to_file [ :changelog, release ], "Changes"
+
+  .release-date
+    %b Release date
+    %time= release.commit_date.split("T").first

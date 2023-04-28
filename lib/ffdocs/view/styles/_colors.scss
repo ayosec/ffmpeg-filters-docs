@@ -1,5 +1,10 @@
+$main-green: #4cae4c; // from ffmpeg.org
+
 :root {
-  --main-green: #4cae4c; // from ffmpeg.org
+  --main-green: #{$main-green};
+
+  --body-fg: black;
+  --body-bg: white;
 
   --header-bg: #222;
   --header-fg: #fff;
@@ -20,6 +25,9 @@
 @media (prefers-color-scheme: dark) {
 
   :root {
+    --body-fg: #eee;
+    --body-bg: #353535;
+
     --header-bg: #000;
     --header-fg: #aaa;
 
@@ -31,13 +39,13 @@
     --breadcrumbs-main: #ddd;
 
     --link-color: #abf;
-
-    body {
-      color: #eee;
-      background: #353535;
-    }
   }
 
+}
+
+body {
+  color: var(--body-fg);
+  background: var(--body-bg);
 }
 
 header {

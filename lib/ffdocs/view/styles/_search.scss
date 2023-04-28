@@ -47,3 +47,48 @@ nav {
     }
   }
 }
+
+main.version-front {
+  &.list section:not(.search) {
+    display: none;
+  }
+
+  section.search {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+
+    border: 1px solid var(--body-fg);
+    padding: 0.5ch;
+
+    // We want to show the shortcut only if the device has a keyboard.
+    // Unfortunately, there is no specific query for it. Instead, we
+    // assume that if "pointer: fine" is available (usually, a mouse),
+    // then the user has a keyboard.
+    @media screen and (pointer: fine) {
+      input:placeholder-shown + span.shortcut {
+        $size: var(--base-font-size);
+
+        content: " ";
+
+        width: $size;
+        height: $size;
+
+        margin-right: 1ch;
+
+        background-image: svg-file(slash-key);
+        background-size: $size;
+        background-position: center left;
+        background-repeat: no-repeat;
+      }
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      border: 0;
+      background: transparent;
+      outline: none;
+    }
+  }
+}

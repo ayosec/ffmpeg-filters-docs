@@ -1,12 +1,16 @@
 :root {
   --list-header: #555;
   --list-items-sep: #ccc;
+
+  --list-selected-bg: #{lighten($main-green, 40%)}
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --list-header: #ccc;
     --list-items-sep: #777;
+
+    --list-selected-bg: #{darken($main-green, 25%)}
   }
 }
 
@@ -69,6 +73,10 @@ main.list {
         border: 0;
         padding-bottom: 0;
       }
+    }
+
+    dt.selected, dt.selected + dd {
+      background: var(--list-selected-bg);
     }
   }
 }

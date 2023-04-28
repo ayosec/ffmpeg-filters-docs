@@ -13,16 +13,25 @@
 }
 
 main.version-front {
-  section.lists {
-    margin-bottom: 3em;
+  section {
+    margin-bottom: 2em;
 
+    &:not(:first-child) {
+      border-top: 5px solid var(--versionfront-metadata-border);
+      padding-top: 2em;
+    }
+  }
+
+  section.lists {
     @media screen and (min-width: 15cm) {
       display: flex;
       column-gap: 3em;
     }
 
     .component {
-      margin-bottom: 2em;
+      @media not screen and (min-width: 15cm) {
+        margin-bottom: 2em;
+      }
 
       h2 {
         color: var(--versionfront-header);
@@ -39,9 +48,6 @@ main.version-front {
   }
 
   section.metadata {
-    border-top: 5px solid var(--versionfront-metadata-border);
-    padding-top: 1em;
-
     & > div:not(:first-child) {
       margin-top: 1em;
     }
