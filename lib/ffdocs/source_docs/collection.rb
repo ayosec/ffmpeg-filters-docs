@@ -27,7 +27,11 @@ module FFDocs::SourceDocs
     :html,
     :description,
     keyword_init: true,
-  )
+  ) do
+    def inspect
+      %[Item[#{name} @ #{group.media_type}/#{group.component}]]
+    end
+  end
 
   class Collection
 
