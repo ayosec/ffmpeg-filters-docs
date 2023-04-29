@@ -249,6 +249,9 @@ module FFDocs::View
         in [ :changelog, version ]
           path_for(version).join("changelog.html")
 
+        in [ :icon, format ]
+          @output.join("icon.#{format}")
+
         else
           raise ArgumentError.new("Invalid object for #path_for: #{obj.inspect}")
 
@@ -366,6 +369,7 @@ module FFDocs::View
     include ::FFDocs::View::WebsiteHelpers
 
     CSS_HREF_CACHE = {}
+    ICON_HREF_CACHE = {}
     JS_SRC_CACHE = {}
 
     def css_path
@@ -376,6 +380,11 @@ module FFDocs::View
     def js_path
       JS_SRC_CACHE[path.parent] ||=
         website.main_js_path.relative_path_from(path.parent)
+    end
+
+    def icon_path(type)
+      ICON_HREF_CACHE[[type, path.parent]] ||=
+        website.path_for([:icon, type]).relative_path_from(path.parent)
     end
   end
 
