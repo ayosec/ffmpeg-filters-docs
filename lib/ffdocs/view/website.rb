@@ -14,6 +14,8 @@ module FFDocs::View
 
     DEFAULT_OUTPUT_DIR = "target/website"
 
+    ICON_SOURCE = File.expand_path("../svg/icon.svg", __FILE__)
+
     CSS_SOURCE = File.expand_path("../styles/main.scss", __FILE__)
 
     JS_SOURCE_FILES = %w(clipboard search nav-search front-search).map do |name|
@@ -140,6 +142,10 @@ module FFDocs::View
         ::FFDocs::View::VersionMatrixRenderer.new(self).render
       end
 
+      workers.launch "icon" do
+        generate_icons()
+      end
+
       # Use the index for the newest release as the main index.
       release_for_main_index = @releases.map(&:release).max
 
@@ -188,6 +194,28 @@ module FFDocs::View
       end
 
       output.close
+    end
+
+    private def generate_icons
+      svg = @output.join("icon.svg")
+      png = @output.join("icon.png")
+
+      if not svg.exist?
+        svg.write(File.read(ICON_SOURCE))
+      end
+
+      if not png.exist?
+        cmds = [
+          %W(rsvg-convert -o #{png.to_s} #{svg.to_s}),
+          %W(optipng #{png.to_s})
+        ]
+
+        cmds.each do |cmd|
+          if not system(*cmd)
+            ::FFDocs.log.error "Failed: #{cmd.inspect}"
+          end
+        end
+      end
     end
 
     # Compute the path for a specific item in the website.

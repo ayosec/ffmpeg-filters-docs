@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg height="60" viewBox="0,0,61,60" width="61" xmlns="http://www.w3.org/2000/svg">
+  <!-- Adapted from https://en.wikipedia.org/wiki/FFmpeg#/media/File:FFmpeg_Logo_new.svg -->
+  <path
+    d="m23.808 3.106-12.804 14.933v6.319l19.018-21.778 30.485-2.58-44.687 47.006 5.894.34 32.454-33.446v31.748l-3.63 3.411 9.221.545v8.799l-28.786-2.438 14.624-14.228v-7.06l-20.876 20.76-24.721-2.093 39.798-43.302-6.603.39-28.74 31.885v-27.091l2.704-3.255-6.648.393v-7.286z"
+    fill="#007808"
+  />
+  <text
+    x="50%"
+    y="90%"
+    text-anchor="middle"
+    fill="white"
+    stroke="black"
+    style="
+      font-size: 50px;
+      font-weight: bold;
+      font-family: monospace;
+    "
+  >FD</text><!-- "Filters Documentation" -->
+</svg>

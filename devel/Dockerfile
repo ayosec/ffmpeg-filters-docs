@@ -9,8 +9,10 @@ RUN \
   apt-get install -y        \
     entr                    \
     less                    \
+    librsvg2-bin            \
     libsaxonb-java          \
     openjdk-11-jre-headless \
+    optipng                 \
     texinfo                 \
     &&                      \
   apt-get clean
