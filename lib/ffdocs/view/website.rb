@@ -3,7 +3,7 @@
 require "base64"
 require "etc"
 require "haml"
-require "sassc"
+require "sass-embedded"
 
 require_relative "release_renderer"
 require_relative "version_matrix_renderer"
@@ -169,16 +169,13 @@ module FFDocs::View
 
     # Compile and store the main CSS file.
     private def init_css!(options)
-      opts = {
+      result = Sass.compile(CSS_SOURCE,
         style: options.compress_css ? :compressed : :expanded,
         functions: SassFunctions,
-        filename: CSS_SOURCE,
-      }
-
-      css = SassC::Engine.new(File.read(CSS_SOURCE), opts).render
+      )
 
       @main_css_path = @output.join(File.basename(CSS_SOURCE, ".scss") + ".css")
-      @main_css_path.write(css)
+      @main_css_path.write(result.css)
     end
 
     # Combine the JS files.
@@ -388,16 +385,19 @@ module FFDocs::View
     end
   end
 
-  module SassFunctions
+  SassFunctions = {
     # Implementation for the `svg-file()` function.
     #
     # It reads a file under the `svg` directory, and embeds its contents
     # encoded in Base64.
-    def svg_file(x)
-      svg_file = File.expand_path("../svg/#{x}.svg", __FILE__)
+    "svg_file($path)": ->(args) {
+      svg_file = File.expand_path("../svg/#{args[0]}.svg", __FILE__)
       enc = Base64.strict_encode64(File.read(svg_file))
-      SassC::Script::Value::String.new(%[url("data:image/svg+xml;base64,#{enc}")])
-    end
-  end
+      Sass::Value::String.new(
+        %[url("data:image/svg+xml;base64,#{enc}")],
+        quoted: false,
+      )
+    }
+  }
 
 end
