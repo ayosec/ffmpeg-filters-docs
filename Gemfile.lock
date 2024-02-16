@@ -3,32 +3,37 @@ GEM
   specs:
     ethon (0.16.0)
       ffi (>= 1.15.0)
-    ffi (1.15.5)
-    haml (6.1.1)
+    ffi (1.16.3)
+    google-protobuf (3.25.2)
+    haml (6.3.0)
       temple (>= 0.8.2)
       thor
       tilt
-    nokogiri (1.14.2-x86_64-linux)
+    mini_portile2 (2.8.5)
+    nokogiri (1.16.2)
+      mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    racc (1.6.2)
-    rouge (4.1.0)
-    sassc (2.4.0)
-      ffi (~> 1.9)
-    temple (0.10.0)
-    thor (1.2.1)
-    tilt (2.1.0)
-    typhoeus (1.4.0)
+    racc (1.7.3)
+    rake (13.1.0)
+    rouge (4.2.0)
+    sass-embedded (1.70.0)
+      google-protobuf (~> 3.25)
+      rake (>= 13.0.0)
+    temple (0.10.3)
+    thor (1.3.0)
+    tilt (2.3.0)
+    typhoeus (1.4.1)
       ethon (>= 0.9.0)
 
 PLATFORMS
-  x86_64-linux
+  ruby
 
 DEPENDENCIES
   haml (~> 6)
   nokogiri (~> 1)
   rouge (~> 4.1)
-  sassc (~> 2)
+  sass-embedded (~> 1)
   typhoeus (~> 1.4)
 
 BUNDLED WITH
-   2.4.6
+   2.5.5

@@ -29,7 +29,6 @@ module FFDocs::View
           true,
           "'",
           :html,
-          ::Haml::AttributeBuilder::BOOLEAN_ATTRIBUTES,
           nil,
           { href: url },
           extra_attrs
