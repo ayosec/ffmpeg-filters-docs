@@ -4,6 +4,7 @@ require "nokogiri"
 require "digest/sha2"
 
 require_relative "html_adapter"
+require_relative "saxonb_cmd"
 
 module FFDocs::SourceDocs
 
@@ -84,31 +85,9 @@ module FFDocs::SourceDocs
     end
 
     # Parse the source in XML.
-    #
-    # To apply the entities, it downloads the DTD and re-parse the file using a
-    # path to a local file.
     private def parse_source(source)
       ::FFDocs.log.info "Parsing source for #{@release.version} ..."
-
-      doc = Nokogiri::XML.parse(source)
-
-      if dtd = doc.internal_subset
-        doc.internal_subset.remove
-        doc.create_internal_subset(
-          dtd.name,
-          dtd.external_id,
-          dtd_path(dtd),
-        )
-      end
-
-      # We have to re-parse it, so the entities defined in the
-      # DTD are substitute.
-      Nokogiri::XML::Document.parse(
-        doc.to_xml,
-        nil,
-        nil,
-        Nokogiri::XML::ParseOptions::DEFAULT_XSLT
-      )
+      Nokogiri::XML.parse(source)
     end
 
     # Extract groups and items from the XML document.
@@ -203,7 +182,7 @@ module FFDocs::SourceDocs
     private def xml_to_html(doc)
       xslt_source = File.expand_path("../section_content.xsl", __FILE__)
 
-      cmd = [ "saxonb-xslt", "-strip:all", "-xsl:#{xslt_source}", "-" ]
+      cmd = [ SaxonbCmd.get_path, "-strip:all", "-xsl:#{xslt_source}", "-" ]
 
       child = IO.popen(cmd, "r+")
       child.write(doc.to_xml)
