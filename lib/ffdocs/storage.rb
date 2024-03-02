@@ -1,3 +1,5 @@
+require "json"
+require "logger"
 require "pathname"
 require "zlib"
 
@@ -5,77 +7,140 @@ require_relative "source_docs"
 
 class FFDocs::Storage
 
-  STORAGE_DIR = Pathname.new(File.expand_path("../../../target/storage", __FILE__))
+  DATA_FILE = Pathname.new(File.expand_path("../data/ffmpeg.tar.zst", __FILE__))
+
+  CACHE_DIR = Pathname.new(
+    ENV["FFDOCS_CACHE"] ||
+      "#{ENV["XDG_CACHE_HOME"] || "#{ENV["HOME"]}/.cache"}/ffmpeg-filters-docs"
+  )
 
   def initialize
-    @repository = ::FFDocs::SourceDocs::Repository.new
+    @data_dir = CACHE_DIR.join("ffmpeg-data")
+    if @data_dir.directory?
+      FileUtils.rm_r(@data_dir)
+    end
 
-    if not STORAGE_DIR.directory?
-      STORAGE_DIR.mkpath
-      STORAGE_DIR.join("CACHEDIR.TAG").write("")
+    @data_dir.mkpath
+
+    if not system("tar", "-C", @data_dir.to_s, "-xf", DATA_FILE.to_s)
+      raise "Can't get data from #{DATA_FILE}"
     end
   end
 
-  # Return a list of tags for the latest release of each major version.
   memoize def releases
-    cached_file = STORAGE_DIR.join("release_tags.json")
-
-    # Get existing tags from the repository.
-    repository_tags =
-      if cached_file.exist?
-        JSON.parse(File.read(cached_file))
-      else
-        @repository.tags.to_a.tap {|t| cached_file.write(t.to_json) }
-      end
-
-    # Find newest tag for each major version.
-    version_tags = {}
-    repository_tags.each do |tag|
-      vt = ::FFDocs::SourceDocs::VersionTag.parse(tag)
-      next if vt.nil?
-
-      version_tags[vt.major] = [ vt, version_tags[vt.major] ].compact.max
-    end
-
-    version_tags.values.sort.reverse
+    @data_dir
+      .children
+      .map {|dir| dir.join("tag.json").read }
+      .map {|tag| ::FFDocs::SourceDocs::VersionTag.from_json(tag) }
+      .sort
+      .reverse
   end
 
-  # Download a blob from a specific tag.
-  def download(tag, path)
-    # Blob hash.
-    cached_file_name = [ "hash", tag, path ].join("--").gsub(/[^a-zA-Z0-9._-]/) { "_%02X_" % $&.ord }
-    cached_file = STORAGE_DIR.join(cached_file_name)
-
-    if cached_file.exist?
-      hash = cached_file.read
-    else
-      hash = @repository.blob_hash(tag, path)
-      cached_file.write(hash)
-    end
-
-    return nil if hash.nil? || hash.empty?
-
-    # Blob data
-    gzcache(STORAGE_DIR.join("blob-#{hash}.gz")) do
-      ::FFDocs.log.info "Download blob #{hash} for #{tag}:#{path} ..."
-      @repository.blob_data(hash)
+  def get_file(version, path)
+    file = @data_dir.join(version.tag).join(path)
+    if file.exist?
+      file.read(encoding: "UTF-8")
     end
   end
 
-  # Cache the result of the block in a gzipped file.
-  def gzcache(filename, &block)
-    cached_file = STORAGE_DIR.join(filename)
+  module SyncData
 
-    if cached_file.exist?
-      Zlib::GzipReader.open(cached_file) do |gz|
-        gz.read
+    GIT_URL = "https://github.com/FFmpeg/FFmpeg.git"
+
+    REPOSITORY_DIR = CACHE_DIR.join("ffmpeg.git")
+
+    extend self
+
+    def run!
+      # Fetch/update the FFmpeg repository.
+      if not REPOSITORY_DIR.directory?
+        REPOSITORY_DIR.parent.mkpath
+        REPOSITORY_DIR.parent.join("CACHEDIR.TAG").write("")
+
+        if not REPOSITORY_DIR.directory?
+          git "clone", "--bare", "--filter=tree:0", GIT_URL, REPOSITORY_DIR.to_s, chdir: false
+        else
+          git "fetch", "--quiet", "--tags"
+        end
       end
-    else
-      data = block.call
-      Zlib::GzipWriter.open(cached_file, 9) do |gz|
-        gz.write(data)
+
+      # Get a list of tags for the latest release of each major version.
+      version_tags = {}
+
+      git("tag").each_line do |tag|
+        tag.chomp!
+        commit, date = git("log", "-1", "--format=%H %ct", tag).split
+
+        vt = ::FFDocs::SourceDocs::VersionTag.parse(
+          tag,
+          commit,
+          Time.at(Integer(date)),
+        )
+
+        if vt
+          version_tags[vt.major] = [ vt, version_tags[vt.major] ].compact.max
+        end
       end
-      data
+
+      # Download the needed files for each version.
+      Dir.mktmpdir do |tmpdir|
+        tmpdir = Pathname.new(tmpdir)
+
+        version_tags.each_value do |version_tag|
+          ver_dir = tmpdir.join(version_tag.tag)
+          ver_dir.mkdir
+
+          ::FFDocs.log.info "Getting files for tag #{version_tag.tag} ..."
+
+          ver_dir.join("tag.json").write(version_tag.to_json)
+
+          [
+            FFDocs::SourceDocs::CHANGELOG_FILE,
+            FFDocs::SourceDocs::Collection::SOURCE_FILE,
+          ].each do |path|
+            output = ver_dir.join(path)
+            if data = git("show", [ version_tag.tag, path ].join(":"), ignore_errors: true)
+              output.parent.mkpath
+              output.write(data)
+            end
+          end
+        end
+
+        DATA_FILE.parent.mkpath
+        system(
+          { "ZSTD_CLEVEL" => "19" },
+          "tar",
+          "-C", tmpdir.to_s,
+          "--mtime=2000-01-01T00:00:00Z",
+          "--zstd",
+          "-cf", DATA_FILE.to_s,
+          ".",
+        )
+      end
+    end
+
+    private def git(*args, chdir: true, ignore_errors: false)
+      workdir = chdir ? REPOSITORY_DIR : "."
+
+      popen_args = {}
+
+      if ignore_errors
+        popen_args[:err] = "/dev/null"
+      end
+
+      child = IO.popen(%w(git) + args, chdir: workdir, **popen_args)
+      output = child.read
+
+      Process.waitpid(child.pid)
+      if not $?.success?
+        if ignore_errors
+          return nil
+        else
+          raise "Git failed with: #$?"
+        end
+      end
+
+      output
     end
   end
 

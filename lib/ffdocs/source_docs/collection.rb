@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-require "nokogiri"
 require "digest/sha2"
+require "nokogiri"
+require "tempfile"
 
 require_relative "html_adapter"
 require_relative "saxonb_cmd"
@@ -48,46 +49,37 @@ module FFDocs::SourceDocs
       @groups = []
       @anchors = {}
 
-      cache_name = "docs-#{release.tag}.xml.gz".gsub(/[^a-zA-Z0-9._-]/) { "_%02X_" % $&.ord }
-      source = storage.gzcache(cache_name) do
-        source = storage.download(release.tag, SOURCE_FILE)
-        raise SourceNotFound if source.nil?
+      texinfo = storage.get_file(release, SOURCE_FILE)
+      raise SourceNotFound if texinfo.nil?
 
-        # Apply local patches, if any.
-        patch = PATCHES_DIR.join("#{release.version}.patch")
-        if patch.exist?
-          tmpfile = Tempfile.new("ffdocs-source")
-          tmpfile.write(source)
-          tmpfile.close
+      # Apply local patches, if any.
+      patch = PATCHES_DIR.join("#{release.version}.patch")
+      if patch.exist?
+        tmpfile = Tempfile.new("ffdocs-source")
+        tmpfile.write(texinfo)
+        tmpfile.close
 
-          diff = patch.read
+        diff = patch.read
 
-          command = %w(patch --batch --output=- --input=-)
-          command << tmpfile.path
+        command = %w(patch --batch --output=- --input=-)
+        command << tmpfile.path
 
-          IO.popen(command, "r+") do |io|
-            io.write(diff)
-            io.close_write
-            source = io.read
-          end
-        end
-
-        ::FFDocs.log.info "Converting texinfo source to XML for #{release.tag} ..."
-        IO.popen(%w(makeinfo --xml --no-split --output=-), "r+") do |io|
-          io.write(source)
+        IO.popen(command, "r+") do |io|
+          io.write(diff)
           io.close_write
-          io.read
+          texinfo = io.read
         end
       end
 
-      xml = parse_source(source)
-      parse_xml(release, xml)
-    end
+      ::FFDocs.log.info "Converting texinfo source to XML for #{release.tag} ..."
+      xml = IO.popen(%w(makeinfo --xml --no-split --output=-), "r+") do |io|
+        io.write(texinfo)
+        io.close_write
+        io.read
+      end
 
-    # Parse the source in XML.
-    private def parse_source(source)
       ::FFDocs.log.info "Parsing source for #{@release.version} ..."
-      Nokogiri::XML.parse(source)
+      parse_xml(release, Nokogiri::XML.parse(xml))
     end
 
     # Extract groups and items from the XML document.
@@ -195,23 +187,6 @@ module FFDocs::SourceDocs
       end
 
       html
-    end
-
-    # Download the DTD from the URL, and returns the path to the file in the local
-    # cache.
-    private def dtd_path(dtd)
-      url = dtd.system_id.sub(/^http:/, "https:")
-      file = FFDocs::Storage::STORAGE_DIR.join("#{Digest::SHA2.hexdigest(url)}.dtd")
-      if not file.exist?
-        response = Typhoeus.get(url)
-        if response.success?
-          file.write(response.body)
-        else
-          ::FFDocs.log.error "DTD failed: #{url}"
-        end
-      end
-
-      file.relative_path_from(Dir.pwd).to_path
     end
 
   end

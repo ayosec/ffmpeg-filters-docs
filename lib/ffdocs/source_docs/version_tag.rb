@@ -1,9 +1,11 @@
+require "time"
+
 module FFDocs::SourceDocs
 
   # Extract a stable version from a tag.
   #
   # `-dev` tags are ignored.
-  VersionTag = Struct.new(
+  VersionTag = Data.define(
     :tag,
     :version,
     :major,
@@ -11,8 +13,7 @@ module FFDocs::SourceDocs
     :commit_date,
     :cmp_key,
   ) do
-    def self.parse(tag_data)
-      tag, commit, date = tag_data.values_at("tag", "commit", "date")
+    def self.parse(tag, commit, date)
 
       if tag =~ /\A[vn]?(\d+(?:\.\d+)+)\Z/
         version = $1
@@ -38,6 +39,16 @@ module FFDocs::SourceDocs
 
     def <=>(other)
       self.cmp_key <=> other.cmp_key
+    end
+
+    def to_json
+      to_h.to_json
+    end
+
+    def self.from_json(json)
+      attrs = JSON.parse(json)
+      attrs["commit_date"] = Time.parse(attrs["commit_date"])
+      new(**attrs)
     end
   end
 

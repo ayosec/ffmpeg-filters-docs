@@ -15,4 +15,4 @@
 
   .release-date
     %b Release date
-    %time= release.commit_date.split("T").first
+    %time= release.commit_date.strftime("%F")

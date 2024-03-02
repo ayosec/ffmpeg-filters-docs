@@ -10,12 +10,18 @@ module FFDocs::CLI
 
     def initialize
       @options = ::FFDocs::Options.parse!
-      @storage = ::FFDocs::Storage.new
-
-      @website = ::FFDocs::View::Website.new(options)
     end
 
     def run!
+      # Sync data from FFmpeg instead of generating a new website.
+      if options.sync_ffmpeg_data
+        ::FFDocs::Storage::SyncData.run!
+        return
+      end
+
+      @storage = ::FFDocs::Storage.new
+      @website = ::FFDocs::View::Website.new(options)
+
       # Track first version where an item is seen.
       first_version_items = {}
 

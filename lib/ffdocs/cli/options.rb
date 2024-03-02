@@ -8,6 +8,7 @@ FFDocs::Options = Struct.new(
   :no_highlighter,
   :output,
   :project_url,
+  :sync_ffmpeg_data,
   :versions,
 ) do
   def self.parse!
@@ -54,6 +55,14 @@ FFDocs::Options = Struct.new(
         "URL for the fmpeg-filters-docs project"
       ) do |url|
         options.project_url = url
+      end
+
+      parser.on(
+        "-S",
+        "--sync-ffmpeg-data",
+        "Sync data from FFmpeg repository."
+      ) do
+        options.sync_ffmpeg_data = true
       end
 
       parser.on(

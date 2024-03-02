@@ -15,7 +15,7 @@ module FFDocs::SourceDocs
     def latest
       release = @storage.releases.max
 
-      blob = @storage.download(release.tag, CHANGELOG_FILE)
+      blob = @storage.get_file(release, CHANGELOG_FILE)
       lines = blob.each_line
 
       Enumerator.new do |yielder|
