@@ -146,7 +146,8 @@ module FFDocs::SourceDocs
             .inner_text
             .gsub(/\s*\(https?:.*?\)/, "")
             .split(".", 2)
-            .first,
+            .first
+            .gsub(/\s+/, " "),
           ".",
         ].join
 
