@@ -142,7 +142,7 @@ class CodeExamplesLexer < Rouge::RegexLexer
   end
 
   state :link_label do
-    rule /\[\w+([:+]\w+)*\]/, Literal::Number
+    rule /\[\w+([:+-]\w+)*\]/, Literal::Number
   end
 
   # Tracks quoted strings and space-separated words.

@@ -46,7 +46,7 @@ module FFDocs::SourceDocs
         Rouge::Lexers::Shell.new
       when /\A(-i|ffplay|ffmpeg|ffprobe)/, /\A(#.+\n)*(\.\/)?(ffplay|ffmpeg|ffprobe)/
         CodeExamplesLexer.new
-      when /\A(\[\w+\]|\w+=)/, /\A\w+\[\w\]/
+      when /\A(\[(\w|-)+\]|\w+=)/, /\A\w+\[\w\]/
         CodeExamplesLexer.new :filtergraph
       end
     end
