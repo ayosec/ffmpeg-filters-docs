@@ -216,6 +216,8 @@ class CodeExamplesLexer < Rouge::RegexLexer
     push do
       rule /\s+/, Text::Whitespace
 
+      rule /\\\s/, Literal::String::Escape
+
       rule(//) do
         pop!
 
