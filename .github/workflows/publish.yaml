@@ -12,41 +12,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Compute cache key
-        id: cache
-        run: 'date +key=%Y-%W >> "$GITHUB_OUTPUT"'
-
-      - name: Ruby setup
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.2.2"
-          bundler-cache: true
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: adopt
-          java-version: "17"
-
-      - name: Cache storage data
-        uses: actions/cache@v3
-        with:
-          path: target/storage
-          key: storate-${{ steps.cache.outputs.key  }}
+      - uses: cachix/install-nix-action@v25
 
       - name: Build
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -ex
-          sudo apt-get install -y librsvg2-bin libsaxonb-java optipng texinfo
-
-          bundle exec ./ffmpeg-filters-docs \
-            --project-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+        run: nix run . -- --project-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
 
       - name: Upload website
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: target/website
 
@@ -61,4 +35,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4

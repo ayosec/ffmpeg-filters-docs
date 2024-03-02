@@ -45,7 +45,7 @@ module FFDocs::View
       @max_workers = options.max_workers
       @output = Pathname.new(options.output || DEFAULT_OUTPUT_DIR)
 
-      @output.mkdir if not @output.directory?
+      @output.mkpath if not @output.directory?
       @output.join("CACHEDIR.TAG").write("")
 
       init_css!(options)
