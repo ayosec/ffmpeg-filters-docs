@@ -23,6 +23,16 @@
           gemdir = ./.;
         };
 
+        deps = with pkgs; [
+          ruby-env
+          git
+          librsvg
+          optipng
+          saxonb_9_1
+          texinfo
+          zstd
+        ];
+
       in {
         formatter = pkgs.nixfmt;
 
@@ -30,17 +40,7 @@
           name = bin-name;
           src = ./.;
 
-          buildInputs = with pkgs; [
-            ruby-env
-            git
-            librsvg
-            optipng
-            saxonb_9_1
-            texinfo
-            zstd
-          ];
-
-          nativeBuildInputs = with pkgs; [ bundix ];
+          buildInputs = deps;
 
           installPhase = ''
             mkdir -p "$out"/{source,bin}
@@ -58,6 +58,22 @@
             } > "$bin"
 
             chmod +x "$bin"
+          '';
+        };
+
+        devShells.default = pkgs.mkShell {
+          buildInputs = let
+            shellDeps = with pkgs; [
+              bundix
+              ruby-env
+              rubyPackages_3_2.solargraph
+            ];
+          in deps ++ shellDeps;
+
+          shellHook = ''
+            # Add the bundle to the GEM_PATH, so the gems installed by Bundler
+            # are visible to Solargraph.
+            GEM_PATH+=":$(bundle env | awk '/Gem Path/ { print $NF }')"
           '';
         };
       });
