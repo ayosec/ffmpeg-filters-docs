@@ -138,7 +138,17 @@ module FFDocs::SourceDocs
         # If the <section> contains multiple filters, it may use different
         # paragraphs to describe each one. To detect those cases, we search
         # a <para> containing a <code> with the filter name.
-        base_desc = [ section.at("p").inner_text.split(".", 2).first, "." ].join
+        #
+        # Any URL between parenthesis will be removed.
+        base_desc = [
+          section
+            .at("p")
+            .inner_text
+            .gsub(/\s*\(https?:.*?\)/, "")
+            .split(".", 2)
+            .first,
+          ".",
+        ].join
 
         sectiontitle.map(&:strip).map do |name|
           desc = base_desc
