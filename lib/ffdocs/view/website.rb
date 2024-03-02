@@ -303,7 +303,7 @@ module FFDocs::View
 
     private def compile_template(name)
       File.open(File.expand_path("../templates/#{name}.haml", __FILE__)) do |tpl|
-        Haml::Template.new(tpl)
+        Haml::Template.new(tpl, default_encoding: "UTF-8")
       end
     end
 
