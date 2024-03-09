@@ -25,6 +25,7 @@
 
         deps = with pkgs; [
           ruby-env
+          ruby-env.wrappedRuby
           git
           librsvg
           optipng
@@ -73,7 +74,7 @@
           shellHook = ''
             # Add the bundle to the GEM_PATH, so the gems installed by Bundler
             # are visible to Solargraph.
-            GEM_PATH+=":$(bundle env | awk '/Gem Path/ { print $NF }')"
+            GEM_PATH+=":$(bundle env 2> /dev/null | awk '/Gem Path/ { print $NF }')"
           '';
         };
       });
