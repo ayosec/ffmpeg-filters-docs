@@ -111,10 +111,17 @@ nav {
       a, b {
         &:not(.hidden) {
           display: block;
-          padding-left: 3ch;
+          padding-left: 2ch;
           padding-right: 1ch;
           margin-bottom: 0.3ex;
         }
+      }
+
+      .items {
+        max-height: 50vh;
+        padding-right: 1ch;
+        scrollbar-width: thin;
+        overflow-y: auto;
       }
     }
 
