@@ -34,6 +34,24 @@
           zstd
         ];
 
+        shellDeps = let
+          # Make a wrapper script to set GEM_PATH with the gems from the bundle.
+          gemWrapper = gem:
+            pkgs.writeShellScriptBin gem ''
+              export GEM_PATH="$(
+                bundle exec ruby -e \
+                  'print Gem.loaded_specs.values.map(&:full_gem_path)*?:'
+              )"
+
+              exec ruby ${pkgs.rubyPackages_3_2.${gem}}/bin/${gem} "$@"
+            '';
+
+        in [
+          pkgs.bundix
+          (gemWrapper "solargraph") # LSP
+          (gemWrapper "yard")
+        ];
+
       in {
         formatter = pkgs.nixfmt;
 
@@ -62,20 +80,6 @@
           '';
         };
 
-        devShells.default = pkgs.mkShell {
-          buildInputs = let
-            shellDeps = with pkgs; [
-              bundix
-              ruby-env
-              rubyPackages_3_2.solargraph
-            ];
-          in deps ++ shellDeps;
-
-          shellHook = ''
-            # Add the bundle to the GEM_PATH, so the gems installed by Bundler
-            # are visible to Solargraph.
-            GEM_PATH+=":$(bundle env 2> /dev/null | awk '/Gem Path/ { print $NF }')"
-          '';
-        };
+        devShells.default = pkgs.mkShell { buildInputs = deps ++ shellDeps; };
       });
 }
