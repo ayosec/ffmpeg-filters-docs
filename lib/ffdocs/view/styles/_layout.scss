@@ -70,13 +70,13 @@ header {
 nav {
   padding: 0;
 
-  .version, .current-version > b {
+  .version, .current-version > .version-label {
     display: block;
-    padding: 1ex 2ex;
+    padding: 1ex;
   }
 
   .current-version {
-    & > b {
+    & > .version-label {
       background: rgba(0, 0, 0, 0.8);
     }
 
@@ -153,6 +153,8 @@ nav {
     }
 
     & > details {
+      clear: both;
+
       & > summary {
         font-size: calc(var(--base-font-size) * 1.1);
         background: rgba(0, 0, 0, 0.4);

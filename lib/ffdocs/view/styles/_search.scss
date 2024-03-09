@@ -5,10 +5,7 @@
 
 nav {
   input.search {
-    $margin: 1ex;
-
     float: right;
-    margin: $margin;
 
     // Hide everything when it does not have the focus.
     color: transparent;
@@ -32,7 +29,7 @@ nav {
       margin-bottom: 1ch;
 
       text-align: center;
-      width: calc(100% - #{$margin * 2});
+      width: 100%;
 
       color: var(--search-fg);
       background: var(--search-bg);

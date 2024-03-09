@@ -31,7 +31,7 @@
     %nav
       - if release
         .current-version
-          %b= release.version
+          .version-label= release.version
 
           - item_group_id = item&.group.object_id
           - nav_item_tree.each do |component, groups|

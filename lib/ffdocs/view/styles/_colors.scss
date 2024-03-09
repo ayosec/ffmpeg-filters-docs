@@ -93,7 +93,7 @@ nav {
     background: var(--nav-current-version-bg);
     color: var(--nav-current-version-fg);
 
-    b {
+    b, .version-label {
       font-family: monospace;
     }
 
