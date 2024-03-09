@@ -390,9 +390,18 @@ module FFDocs::View
     #
     # It reads a file under the `svg` directory, and embeds its contents
     # encoded in Base64.
+    #
+    # The XML is minimized.
     "svg_file($path)": ->(args) {
       svg_file = File.expand_path("../svg/#{args[0]}.svg", __FILE__)
-      enc = Base64.strict_encode64(File.read(svg_file))
+
+      doc = Nokogiri::XML(File.read(svg_file)) do |config|
+        config.strict.noblanks
+      end
+
+      xml = doc.to_xml(indent: 0)
+
+      enc = Base64.strict_encode64(xml)
       Sass::Value::String.new(
         %[url("data:image/svg+xml;base64,#{enc}")],
         quoted: false,
