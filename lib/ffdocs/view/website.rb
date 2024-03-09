@@ -17,7 +17,7 @@ module FFDocs::View
 
     CSS_SOURCE = File.expand_path("../styles/main.scss", __FILE__)
 
-    JS_SOURCE_FILES = %w(clipboard search nav-search nav-fixes front-search).map do |name|
+    JS_SOURCE_FILES = %w(clipboard search nav-search front-search).map do |name|
       File.expand_path("../javascript/#{name}.js", __FILE__)
     end
 

@@ -111,17 +111,39 @@ nav {
       a, b {
         &:not(.hidden) {
           display: block;
-          padding-left: 2ch;
           padding-right: 1ch;
           margin-bottom: 0.3ex;
         }
       }
 
       .items {
-        max-height: 50vh;
-        padding-right: 1ch;
-        scrollbar-width: thin;
-        overflow-y: auto;
+        padding-left: 2ch;
+
+        input.show-all, .show-all-label {
+          display: none;
+        }
+
+        &:has(.collapse) {
+          // Items with the `collapse` class are hidden if:
+          //
+          // - No filter is being applied (i.e. there is no `.hidden` elements).
+          // - User has not clicked on "Show All".
+          &:not(:has(.hidden)):not(:has(.show-all:checked)) {
+            &::before {
+              content: "...";
+            }
+
+            .collapse {
+              display: none;
+            }
+
+            .show-all-label {
+              display: block;
+              padding-top: 0.5ch;
+              cursor: pointer;
+            }
+          }
+        }
       }
     }
 

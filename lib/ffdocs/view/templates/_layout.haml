@@ -44,11 +44,19 @@
                     %summary= media_type
 
                     .items
-                      - groups.flat_map(&:items).each do |other|
+                      - items = groups.flat_map(&:items)
+                      - item_position = items.find_index {|i| i.object_id == item.object_id }
+                      - class_attr = { class: "collapse" }
+                      - items.each_with_index do |other, index|
+                        - attrs = item_position && (index - item_position).abs > 7 ? class_attr : {}
                         - if other.object_id == item.object_id
                           %b= item.name
                         - else
-                          != link_to_file other, other.name, title: other.description
+                          != link_to_file other, other.name, title: other.description, **attrs
+
+                      - show_all_id = "showall#{groups.object_id}"
+                      %label.show-all-label{for: show_all_id} Show All
+                      %input.show-all{id: show_all_id, type: "checkbox"}
 
         - else
           != link_to_file it_release, it_release.version, class: "version"
