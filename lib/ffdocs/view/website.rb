@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "base64"
-require "etc"
 require "haml"
 require "sass-embedded"
 
@@ -42,7 +41,6 @@ module FFDocs::View
 
     def initialize(options)
       @project_url = options.project_url
-      @max_workers = options.max_workers
       @output = Pathname.new(options.output || DEFAULT_OUTPUT_DIR)
 
       @output.mkpath if not @output.directory?
@@ -133,37 +131,48 @@ module FFDocs::View
       end
     end
 
-    def render
-      workers = Workers.new(@max_workers)
-
+    def render(executor)
       @releases.freeze
+      jobs = []
 
-      workers.launch "version-matrix" do
+      jobs << Concurrent::Promise.execute(executor: executor) do
         ::FFDocs::View::VersionMatrixRenderer.new(self).render
+        true
       end
 
-      workers.launch "icon" do
+      jobs << Concurrent::Promise.execute(executor: executor) do
         generate_icons()
+        true
       end
 
       # Use the index for the newest release as the main index.
       release_for_main_index = @releases.map(&:release).max
 
       @releases.each do |rd|
-        workers.launch rd.release.version do
-          renderer = ::FFDocs::View::ReleaseRenderer.new(self, rd.release, rd.source)
-          renderer.render
+        jobs << Concurrent::Promise.execute(executor: executor) do
+          pid = fork do
+            ::FFDocs.log.info "Render for #{rd.release.version} ..."
+            renderer = ::FFDocs::View::ReleaseRenderer.new(self, rd.release, rd.source)
+            renderer.render
 
-          if rd.release == release_for_main_index
-            renderer.render_version_index(@output.join("index.html"))
+            if rd.release == release_for_main_index
+              renderer.render_version_index(@output.join("index.html"))
+            end
           end
+
+          Process.waitpid(pid)
+          success = $?.success?
+          if not success
+            ::FFDocs.log.error "Failure in #{rd.release.version}"
+          end
+
+          success
         end
       end
 
-      workers.wait_all
-
-      if not workers.failures.empty?
-        raise RenderFailed.new("Failed for versions #{workers.failures.join(",")}")
+      # Exit immediately if any job has failed.
+      if not jobs.all?(&:value!)
+        exit 1
       end
     end
 
@@ -307,48 +316,6 @@ module FFDocs::View
       end
     end
 
-    class Workers
-      NPROCS = Etc.nprocessors
-
-      attr_reader :failures
-
-      def initialize(max_workers = nil)
-        @pids = {}
-        @failures = []
-        @max_workers = max_workers || NPROCS
-      end
-
-      def launch(label, &block)
-        if @max_workers == 0
-          block.call
-          return
-        end
-
-        while @pids.size >= @max_workers
-          wait_one()
-        end
-
-        ::FFDocs.log.info "Launching worker for #{label} ..."
-
-        pid = fork(&block)
-        @pids[pid] = label
-      end
-
-      def wait_one
-        pid = Process.wait
-        label = @pids.delete(pid)
-        return if label.nil?
-
-        if not $?.success?
-          ::FFDocs.log.error "Worker for #{label.inspect} failed."
-          @failures << label
-        end
-      end
-
-      def wait_all
-        wait_one while not @pids.empty?
-      end
-    end
   end
 
   RenderLayoutContext = Struct.new(

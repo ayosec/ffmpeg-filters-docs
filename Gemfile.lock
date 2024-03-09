@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    concurrent-ruby (1.2.3)
     google-protobuf (3.25.3)
     haml (6.3.0)
       temple (>= 0.8.2)
@@ -24,6 +25,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  concurrent-ruby (~> 1.2)
   haml (~> 6)
   nokogiri (~> 1)
   rouge (~> 4.1)

@@ -1,4 +1,14 @@
 {
+  concurrent-ruby = {
+    groups = [ "default" ];
+    platforms = [ ];
+    source = {
+      remotes = [ "https://rubygems.org" ];
+      sha256 = "1qh1b14jwbbj242klkyz5fc7npd4j0mvndz62gajhvl1l3wd7zc2";
+      type = "gem";
+    };
+    version = "1.2.3";
+  };
   google-protobuf = {
     groups = [ "default" ];
     platforms = [ ];
