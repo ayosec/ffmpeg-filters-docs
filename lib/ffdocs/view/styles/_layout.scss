@@ -75,39 +75,12 @@ nav {
     padding: 1ex;
   }
 
+  .other-versions summary {
+    padding-left: 1ex;
+  }
+
   .current-version {
-    & > .version-label {
-      background: rgba(0, 0, 0, 0.8);
-    }
-
     details {
-      summary {
-        display: block;  // Remove icon.
-        cursor: pointer;
-        outline: 0;
-
-        padding: 0.5rem 0.5rem 0.5rem 1rem;
-        border-bottom: 1px solid $nav-summary-border-color;
-
-        &::after {
-          content: " ";
-
-          float: right;
-          display: inline-block;
-
-          margin-left: 1ch;
-          height: 1em;
-          width: 1em;
-
-          background-image: svg-file(arrow);
-          background-size: 1em;
-          background-position: center right;
-          background-repeat: no-repeat;
-
-          transition: transform 200ms ease-in;
-        }
-      }
-
       a, b {
         &:not(.hidden) {
           display: block;
@@ -147,11 +120,6 @@ nav {
       }
     }
 
-    details[open] > summary::after {
-      // Flip icon in <summary> when <details> is open.
-      transform: scale(1, -1);
-    }
-
     & > details {
       clear: both;
 
@@ -177,6 +145,41 @@ nav {
   .hidden {
     display: none;
   }
+
+  details {
+    summary {
+      display: block;  // Remove icon.
+      cursor: pointer;
+      outline: 0;
+
+      padding: 0.5rem 0.5rem 0.5rem 1rem;
+      border-bottom: 1px solid $nav-summary-border-color;
+
+      &::after {
+        content: " ";
+
+        float: right;
+        display: inline-block;
+
+        margin-left: 1ch;
+        height: 1em;
+        width: 1em;
+
+        background-image: svg-file(arrow);
+        background-size: 1em;
+        background-position: center right;
+        background-repeat: no-repeat;
+
+        transition: transform 200ms ease-in;
+      }
+    }
+
+    &[open] > summary::after {
+      // Flip icon in <summary> when <details> is open.
+      transform: scale(1, -1);
+    }
+  }
+
 }
 
 main {

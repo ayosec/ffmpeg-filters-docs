@@ -76,7 +76,7 @@ nav {
   color: var(--nav-fg);
   border-right: 2px solid var(--main-green);
 
-  & > a {
+  .other-versions a {
     font-family: monospace;
 
     color: var(--main-green);
@@ -87,6 +87,11 @@ nav {
       background: var(--main-green);
       color: var(--nav-bg);
     }
+  }
+
+  .version-label, .other-versions {
+    color: #fff;
+    background: rgba(0, 0, 0, 0.8);
   }
 
   .current-version {
