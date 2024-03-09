@@ -49,6 +49,8 @@ main.item section {
     padding: 1ch;
 
     button.copy {
+      cursor: pointer;
+
       border: 1px solid var(--item-btncopy-fg);
       color: var(--item-btncopy-fg);
       background: var(--item-btncopy-bg);
@@ -57,11 +59,17 @@ main.item section {
       position: static;
       font-size: smaller;
 
+      width: 3ch;
+      height: 3ch;
+      border-radius: 50%;
+
+      justify-content: center;
+      align-items: center;
+
       &.result {
         border-color: var(--item-btncopy-bg);
         color: var(--item-btncopy-bg);
         background: var(--item-btncopy-fg);
-        font-size: unset;
         pointer-events: none;
       }
 
@@ -72,7 +80,7 @@ main.item section {
 
     &:hover {
       button.copy {
-        display: unset;
+        display: inline-flex;
       }
     }
   }

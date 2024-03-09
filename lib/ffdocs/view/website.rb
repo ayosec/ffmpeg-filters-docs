@@ -135,6 +135,8 @@ module FFDocs::View
       @releases.freeze
       jobs = []
 
+      ::FFDocs.log.info "Rendering to #@output"
+
       jobs << Concurrent::Promise.execute(executor: executor) do
         ::FFDocs::View::VersionMatrixRenderer.new(self).render
         true
