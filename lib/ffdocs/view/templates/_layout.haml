@@ -29,37 +29,37 @@
           != link_to project_url, "Source"
 
     %nav
+      - if release
+        .current-version
+          %b= release.version
+
+          - item_group_id = item&.group.object_id
+          - nav_item_tree.each do |component, groups|
+            %details{ open: groups.any? {|g| g[1].any? {|g| g.object_id == item_group_id } } }
+              %summary= component
+
+              - groups.each do |media_type, groups|
+                %details{ open: groups.any? {|g| g.object_id == item_group_id } }
+                  %summary= media_type
+
+                  .items
+                    - items = groups.flat_map(&:items)
+                    - item_position = items.find_index {|i| i.object_id == item.object_id }
+                    - class_attr = { class: "collapse" }
+                    - items.each_with_index do |other, index|
+                      - attrs = item_position && (index - item_position).abs > 7 ? class_attr : {}
+                      - if other.object_id == item.object_id
+                        %b= item.name
+                      - else
+                        != link_to_file other, other.name, title: other.description, **attrs
+
+                    - show_all_id = "showall#{groups.object_id}"
+                    %label.show-all-label{for: show_all_id} Show All
+                    %input.show-all{id: show_all_id, type: "checkbox"}
+
       - releases.each do |it_release|
-        - if release == it_release
-          .current-version
-            %b= it_release.version
-
-            - item_group_id = item&.group.object_id
-            - nav_item_tree.each do |component, groups|
-              %details{ open: groups.any? {|g| g[1].any? {|g| g.object_id == item_group_id } } }
-                %summary= component
-
-                - groups.each do |media_type, groups|
-                  %details{ open: groups.any? {|g| g.object_id == item_group_id } }
-                    %summary= media_type
-
-                    .items
-                      - items = groups.flat_map(&:items)
-                      - item_position = items.find_index {|i| i.object_id == item.object_id }
-                      - class_attr = { class: "collapse" }
-                      - items.each_with_index do |other, index|
-                        - attrs = item_position && (index - item_position).abs > 7 ? class_attr : {}
-                        - if other.object_id == item.object_id
-                          %b= item.name
-                        - else
-                          != link_to_file other, other.name, title: other.description, **attrs
-
-                      - show_all_id = "showall#{groups.object_id}"
-                      %label.show-all-label{for: show_all_id} Show All
-                      %input.show-all{id: show_all_id, type: "checkbox"}
-
-        - else
-          != link_to_file it_release, it_release.version, class: "version"
+        - if release != it_release
+          != link_to_file versioned_target(it_release, item), it_release.version, class: "version"
 
     %main{class: main_class}
       != main_body

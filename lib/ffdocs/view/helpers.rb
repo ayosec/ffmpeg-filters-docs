@@ -41,6 +41,21 @@ module FFDocs::View
       ].join
     end
 
+    def versioned_target(release_tag, item)
+      if item and release = website.releases.find {|r| r.release == release_tag }
+        release.source.groups.each do |group|
+          next if not item.group.media_type != group.media_type and item.group.component != group.component
+          group.items.each do |i|
+            if i.name == item.name
+              return i
+            end
+          end
+        end
+      end
+
+      release_tag
+    end
+
     def releases
       website.releases.map(&:release).sort.reverse.each
     end
