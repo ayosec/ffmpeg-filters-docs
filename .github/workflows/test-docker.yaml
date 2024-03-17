@@ -1,0 +1,25 @@
+name: Test Docker Image
+
+on:
+  pull_request:
+    branches: main
+  push:
+    branches: ["*"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build -t ffdocs -f docker/Dockerfile .
+
+      - name: Build a Website
+        run: |
+          set -xe
+
+          out=$(mktemp -d)
+          docker run --volume "$out:/out" --rm ffdocs -o /out -v 1.0.*
+          test "$(find "$out" -name '*.html' | wc -l)" -ge 2
