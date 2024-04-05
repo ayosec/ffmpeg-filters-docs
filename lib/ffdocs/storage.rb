@@ -110,11 +110,16 @@ class FFDocs::Storage
         system(
           { "ZSTD_CLEVEL" => "19" },
           "tar",
-          "-C", tmpdir.to_s,
+          "--sort=name",
           "--mtime=2000-01-01T00:00:00Z",
+          "--owner=0",
+          "--group=0",
+          "--numeric-owner",
+          "--format=ustar",
           "--zstd",
           "-cf", DATA_FILE.to_s,
           ".",
+          chdir: tmpdir.to_s,
         )
       end
     end
