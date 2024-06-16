@@ -35,7 +35,7 @@ module FFDocs::SourceDocs
             case lines.next.chomp
             when /\A\s*\Z/
               break if items.size > 0
-            when /\A-(.*)/m
+            when /\A-(.*)/m, /\A^ (\S.*)/m
               items << $1.strip
             when /\A\s+(\S.*)/m
               items.last << " " << $1.strip
