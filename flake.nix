@@ -53,7 +53,7 @@
         ];
 
       in {
-        formatter = pkgs.nixfmt;
+        formatter = pkgs.nixfmt-classic;
 
         packages.default = pkgs.stdenv.mkDerivation {
           name = bin-name;
