@@ -240,7 +240,7 @@ module FFDocs::View
       @website_files[obj_key] ||=
         case obj
         in ::FFDocs::SourceDocs::VersionTag
-          @output.join(InvalidPathName.check!(obj.version))
+          @output.join(InvalidPathName.check!(obj.major))
 
         in ::FFDocs::SourceDocs::Group
           [ obj.component, obj.media_type ].
