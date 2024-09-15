@@ -28,8 +28,8 @@
         - if project_url
           != link_to project_url, "Source"
 
-    %nav
-      - if release
+    - if release
+      %nav
         .current-version
           .version-label= release.version
 
@@ -57,12 +57,12 @@
                     %label.show-all-label{for: show_all_id} Show All
                     %input.show-all{id: show_all_id, type: "checkbox"}
 
-      - if releases.size > 1
-        %details.other-versions
-          %summary Other
-          - releases.each do |it_release|
-            - if release != it_release
-              != link_to_file versioned_target(it_release, item), it_release.version, class: "version"
+        - if releases.size > 1
+          %details.other-versions
+            %summary Other
+            - releases.each do |it_release|
+              - if release != it_release
+                != link_to_file versioned_target(it_release, item), it_release.version, class: "version"
 
     %main{class: main_class}
       != main_body
