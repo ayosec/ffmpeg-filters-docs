@@ -57,11 +57,9 @@ class FFDocs::Storage
         REPOSITORY_DIR.parent.mkpath
         REPOSITORY_DIR.parent.join("CACHEDIR.TAG").write("")
 
-        if not REPOSITORY_DIR.directory?
-          git "clone", "--bare", "--filter=tree:0", GIT_URL, REPOSITORY_DIR.to_s, chdir: false
-        else
-          git "fetch", "--quiet", "--tags"
-        end
+        git "clone", "--bare", "--filter=tree:0", GIT_URL, REPOSITORY_DIR.to_s, chdir: false
+      else
+        git "fetch", "--quiet", "--tags"
       end
 
       # Get a list of tags for the latest release of each major version.
