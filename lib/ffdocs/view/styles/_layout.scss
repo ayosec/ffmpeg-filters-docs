@@ -172,6 +172,9 @@ nav {
 
         transition: transform 200ms ease-in;
       }
+
+      // Only needed in Safari.
+      &::-webkit-details-marker { display: none; }
     }
 
     &[open] > summary::after {
