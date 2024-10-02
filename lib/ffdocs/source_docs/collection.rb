@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "digest/sha2"
+require "net/http"
 require "nokogiri"
 require "tempfile"
 
@@ -10,6 +11,8 @@ require_relative "saxonb_cmd"
 module FFDocs::SourceDocs
 
   PATCHES_DIR = Pathname.new(File.expand_path("../patches", __FILE__))
+
+  DTD_MUTEX = Mutex.new
 
   class SourceNotFound < StandardError; end
   class XMLTransformFailed < StandardError; end
@@ -77,6 +80,8 @@ module FFDocs::SourceDocs
         io.close_write
         io.read
       end
+
+      xml = cache_dtd(xml, storage)
 
       ::FFDocs.log.info "Parsing source for #{@release.version} ..."
       parse_xml(release, Nokogiri::XML.parse(xml))
@@ -199,6 +204,32 @@ module FFDocs::SourceDocs
 
       html
     end
+
+    # Replace the URLs for the DTD to use a cached file.
+    private def cache_dtd(xml, storage)
+      xml.sub(%r[<!DOCTYPE .*?>]) do |m|
+        m.gsub(/https?:[^"]+/) do |url|
+          cached = storage.dtd_file(url)
+
+          DTD_MUTEX.synchronize do
+            if not cached.exist?
+              url = url.sub(/^http:/, "https:")
+              ::FFDocs.log.info "Downloading DTD for #{url} ..."
+
+              case Net::HTTP.get_response(URI(url))
+              in Net::HTTPSuccess => response
+                cached.write(response.body)
+              in _ => failure
+                ::FFDocs.log.error "Failed request: #{url}: #{failure}"
+              end
+            end
+          end
+
+          cached.to_s
+        end
+      end
+    end
+
 
   end
 

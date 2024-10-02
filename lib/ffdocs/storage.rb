@@ -1,3 +1,4 @@
+require "digest/sha2"
 require "json"
 require "logger"
 require "pathname"
@@ -41,6 +42,13 @@ class FFDocs::Storage
     if file.exist?
       file.read(encoding: "UTF-8")
     end
+  end
+
+  def dtd_file(url)
+    dtd_dir = CACHE_DIR.join("dtd")
+    dtd_dir.mkpath if not dtd_dir.directory?
+
+    dtd_dir.join(Digest::SHA2.hexdigest(url) + ".dtd")
   end
 
   module SyncData
