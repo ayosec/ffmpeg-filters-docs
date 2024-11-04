@@ -1,3 +1,5 @@
+@use "colors";
+
 * {
   box-sizing: border-box;
 }
@@ -148,12 +150,13 @@ nav {
 
   details {
     summary {
+
       display: block;  // Remove icon.
       cursor: pointer;
       outline: 0;
 
       padding: 0.5rem 0.5rem 0.5rem 1rem;
-      border-bottom: 1px solid $nav-summary-border-color;
+      border-bottom: 1px solid colors.$nav-summary-border-color;
 
       &::after {
         content: " ";

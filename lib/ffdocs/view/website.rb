@@ -187,6 +187,9 @@ module FFDocs::View
 
       @main_css_path = @output.join(File.basename(CSS_SOURCE, ".scss") + ".css")
       @main_css_path.write(result.css)
+    rescue Sass::CompileError => e
+      STDERR.print e.full_message(highlight: true)
+      exit 1
     end
 
     # Combine the JS files.

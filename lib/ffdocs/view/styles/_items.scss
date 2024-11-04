@@ -106,14 +106,14 @@ main.item section {
   }
 
   dl {
+    border-width: 1px 1px 0 1px;
+    border-style: solid;
+    border-color: var(--item-table-border);
+
     @media screen and (min-width: 15cm) {
       display: grid;
       grid-template-columns: min-content 1fr;
     }
-
-    border-width: 1px 1px 0 1px;
-    border-style: solid;
-    border-color: var(--item-table-border);
 
     dt {
       font-family: monospace;

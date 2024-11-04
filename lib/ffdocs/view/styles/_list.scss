@@ -1,8 +1,11 @@
+@use "sass:color";
+@use "colors";
+
 :root {
   --list-header: #555;
   --list-items-sep: #ccc;
 
-  --list-selected-bg: #{lighten($main-green, 40%)}
+  --list-selected-bg: #{color.adjust(colors.$main-green, $lightness: 40%)}
 }
 
 @media (prefers-color-scheme: dark) {
@@ -10,7 +13,7 @@
     --list-header: #ccc;
     --list-items-sep: #777;
 
-    --list-selected-bg: #{darken($main-green, 25%)}
+    --list-selected-bg: #{color.adjust(colors.$main-green, $lightness: -25%)}
   }
 }
 

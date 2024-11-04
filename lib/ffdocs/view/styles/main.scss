@@ -1,11 +1,11 @@
-@import "colors";
-@import "items";
-@import "layout";
-@import "list";
-@import "search";
-@import "version_changelog";
-@import "version_front";
-@import "version_matrix";
+@use "colors";
+@use "items";
+@use "layout";
+@use "list";
+@use "search";
+@use "version_changelog";
+@use "version_front";
+@use "version_matrix";
 
 :root {
   --base-font-size: 12pt;
