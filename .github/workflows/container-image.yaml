@@ -1,4 +1,4 @@
-name: Test Docker Image
+name: Container Image
 
 on:
   pull_request:
@@ -9,6 +9,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - uses: actions/checkout@v4
@@ -23,3 +27,17 @@ jobs:
           out=$(mktemp -d)
           docker run --volume "$out:/out" --rm ffdocs -o /out -v 1.0.*
           test "$(find "$out" -name '*.html' | wc -l)" -ge 2
+
+      - name: Push Image
+        if: github.ref_name == 'main'
+        run: |
+          set -e
+
+          echo "${{ secrets.GITHUB_TOKEN }}" \
+            | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+          IMAGE_ID=ghcr.io/${{ github.repository }}:latest
+
+          set -x
+          docker tag ffdocs "$IMAGE_ID"
+          docker push "$IMAGE_ID"

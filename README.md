@@ -83,12 +83,22 @@ $ nix develop --command ./ffmpeg-filters-docs […]
 
 ### Docker
 
-A Docker image can be built with the file [`docker/Dockerfile`](./docker/Dockerfile).
+A Docker image is published to GitHub Packages:
 
 ```console
-$ docker build --tag ffdocs --file docker/Dockerfile .
+$ docker run --rm -v /tmp/ffdocs:/out ghcr.io/ayosec/ffmpeg-filters-docs --output /out
+```
 
-$ docker run --volume /tmp/web:/tmp/web ffdocs --versions 7.1 --output /tmp/web
+To run a local checkout of the repository (for example, to test changes in the implementation), replace the `/app` directory:
+
+```console
+$ docker run --rm -v /tmp/ffdocs:/out -v "$PWD:/app" ghcr.io/ayosec/ffmpeg-filters-docs --output /out
+```
+
+The image can be built locally with the file [`docker/Dockerfile`](./docker/Dockerfile):
+
+```console
+$ docker build --tag ffmpeg-filters-docs --file docker/Dockerfile .
 ```
 
 
