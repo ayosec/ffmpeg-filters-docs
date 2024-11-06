@@ -70,6 +70,13 @@ main.item section {
     @media screen and (min-width: 15cm) {
       display: grid;
       grid-template-columns: min-content 1fr;
+
+      // Break some option names, like `force_original_aspect_ratio`
+      // in the `scale` filter.
+      dt {
+        overflow-wrap: break-word;
+        max-width: 25ch;
+      }
     }
 
     dt {
