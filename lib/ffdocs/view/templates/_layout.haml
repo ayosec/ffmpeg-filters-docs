@@ -43,6 +43,9 @@
                   %summary= media_type
 
                   .items
+                    - show_all_id = "showall#{groups.object_id}"
+                    %label.show-all-label{for: show_all_id} ...
+
                     - items = groups.flat_map(&:items)
                     - item_position = items.find_index {|i| i.object_id == item.object_id }
                     - class_attr = { class: "collapse" }
@@ -53,7 +56,6 @@
                       - else
                         != link_to_file other, other.name, title: other.description, **attrs
 
-                    - show_all_id = "showall#{groups.object_id}"
                     %label.show-all-label{for: show_all_id} Show All
                     %input.show-all{id: show_all_id, type: "checkbox"}
 

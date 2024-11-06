@@ -108,18 +108,17 @@ nav {
           // - No filter is being applied (i.e. there is no `.hidden` elements).
           // - User has not clicked on "Show All".
           &:not(:has(.hidden)):not(:has(.show-all:checked)) {
-            &::before {
-              content: "...";
-            }
-
             .collapse {
               display: none;
             }
 
             .show-all-label {
               display: block;
-              padding-top: 0.5ch;
               cursor: pointer;
+
+              &:not(:first-child) {
+                padding-top: 0.5ch;
+              }
             }
           }
         }
