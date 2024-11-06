@@ -25,10 +25,7 @@ module FFDocs::SourceDocs
     private def stylize_code_blocks(doc)
       doc.search("pre").each do |elem|
         code = elem.inner_text.strip
-        if lexer = guess_lexer(code)
-          formatter = Rouge::Formatters::HTMLInline.new(Rouge::Themes::Github.new)
-          result = formatter.format(lexer.lex(code))
-
+        if result = SyntaxHighlight.highlight(code)
           # Replace <pre> with the generated HTML.
           elem.set_attribute("data-source", code)
           elem.inner_html = Nokogiri::HTML5.fragment(result)
@@ -38,16 +35,25 @@ module FFDocs::SourceDocs
       doc
     end
 
-    private def guess_lexer(code)
-      case code.lstrip
-      when /\A__kernel/
-        Rouge::Lexers::C.new
-      when %r{\A#!.*/sh}, /\Aecho /
-        Rouge::Lexers::Shell.new
-      when /\A(-i|ffplay|ffmpeg|ffprobe)/, /\A(#.+\n)*(\.\/)?(ffplay|ffmpeg|ffprobe)/
-        CodeExamplesLexer.new
-      when /\A(\[(\w|-)+\]|\w+=)/, /\A\w+\[\w\]/
-        CodeExamplesLexer.new :filtergraph
+    module SyntaxHighlight
+      def self.highlight(code)
+        if lexer = guess_lexer(code)
+          formatter = Rouge::Formatters::HTMLInline.new(Rouge::Themes::Github.new)
+          formatter.format(lexer.lex(code))
+        end
+      end
+
+      def self.guess_lexer(code)
+        case code.lstrip
+        when /\A__kernel/
+          Rouge::Lexers::C.new
+        when %r{\A#!.*/sh}, /\Aecho /
+          Rouge::Lexers::Shell.new
+        when /\A(-i|ffplay|ffmpeg|ffprobe)/, /\A(#.+\n)*(\.\/)?(ffplay|ffmpeg|ffprobe)/
+          CodeExamplesLexer.new
+        when /\A(\[(\w|-)+\]|\w+=)/, /\A\w+\[\w\]/
+          CodeExamplesLexer.new :filtergraph
+        end
       end
     end
 

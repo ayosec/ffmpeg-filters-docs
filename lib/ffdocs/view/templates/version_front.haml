@@ -1,18 +1,21 @@
-%section.lists
-  - components.each do |component, groups|
-    .component
-      %h2= component
+%section.info
 
-      - groups.sort_by(&:media_type).each do |group|
-        != link_to_file group, group.media_type
+  %h1= "Filters for FFmpeg #{release.version}"
 
-%section.metadata
-  .source
-    != link_to commit_url(release.commit_hash), "Source code"
+  %article
+    :erb
+      This is an alternative presentation of the
+      <a href="https://ffmpeg.org/ffmpeg-filters.html">official documentation</a>
+      for filters in
+      <%= link_to commit_url(release.commit_hash), "FFmpeg #{release.version}" %>.
 
-  .changelog
-    != link_to_file [ :changelog, release ], "Changes"
+    %p
+      It aims to be easier to read and easier to navigate.
 
-  .release-date
-    %b Release date
-    %time= release.commit_date.strftime("%F")
+    %p
+      :erb
+        FFmpeg <%= release.version %> was released on
+        <time><%= release.commit_date.strftime("%F") %></time>
+        (<%= link_to_file([ :changelog, release ], "changes") %>).
+
+  != readme_info

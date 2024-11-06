@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "redcarpet"
+
 require_relative "helpers"
 
 module FFDocs::View
@@ -191,9 +193,21 @@ module FFDocs::View
       [ FFMPEG_COMMITS_URL_PREFIX, hash ].join
     end
 
-    def components
-      cs = renderer.source.groups.group_by(&:component).to_a
-      cs.sort_by(&:first)
+    def readme_info
+      # Get the section about differences from the README.
+      readme = File.read(File.expand_path("../../../../README.md", __FILE__))
+      differences = readme[
+          %r[
+            <!--\s*differences\s*-->
+            (.+?)
+            <!--\s*end\s*differences\s*-->
+          ]xm,
+          1
+      ]
+
+      Redcarpet::Markdown
+        .new(MarkdownIndexRender, context: self)
+        .render(differences)
     end
   end
 
@@ -214,6 +228,87 @@ module FFDocs::View
       versions.reverse
     end
 
+  end
+
+  class MarkdownIndexRender < Redcarpet::Render::HTML
+    # Use `*...*` to mark specific links.
+    def emphasis(text)
+      case text
+      when %r[(.*)\s+/\s+(.*)]
+        component = $1
+        media_type = $2
+        group = @options[:context].renderer.source.groups.find do |group|
+          group.media_type == media_type && group.component = component
+        end
+
+        if group
+          @options[:context].link_to_file group, text
+        else
+          %[<em>#{text}</em>]
+        end
+
+      when "Other Vers."
+        js = <<~JS
+          (function(e) {
+            e.open = true;
+
+            requestAnimationFrame(() => e.scrollIntoView(true));
+          })(document.querySelector(".other-versions"));
+
+          return false;
+        JS
+
+        js = CGI.escapeHTML(js).gsub("\n", "&#10;");
+
+        %[<a href="#other-versions-header" onclick="#{js}" >#{text}</a>]
+
+      when "Version Matrix"
+        @options[:context].link_to_file :version_matrix, text
+
+      else
+        %[<em>#{text}</em>]
+      end
+    end
+
+    # Process `[highlight]` comments.
+    def block_html(html)
+      if html =~ %r|\A<!--\s*\[highlight\]\s*(.*?)\n+(.+)-->\Z|m
+        text = $1
+        code = $2.rstrip
+
+        # Parse `filter:NAME` tags.
+        text.gsub!(/filter:(\S+)/) do |m, x|
+          filter_name = $1
+          filter = catch :filter do
+              @options[:context].renderer.source.groups.each do |group|
+              group.items.each do |item|
+                if item.name == filter_name
+                  throw :filter, item
+                end
+              end
+            end
+
+            nil
+          end
+
+          if filter
+            @options[:context].link_to_file filter, filter_name
+          else
+            "<code>#{filter_name}</code>"
+          end
+        end
+
+        # Remove the prefix to indent the source.
+        prefix = code[/\A\s+/]
+        code = code.gsub(/^#{prefix}/, "")
+
+        code = ::FFDocs::SourceDocs::HTMLAdapter::SyntaxHighlight.highlight(code)
+
+        %[#{text}\n<pre class="code-snippet">#{code}</pre>]
+      else
+        html
+      end
+    end
   end
 
 end

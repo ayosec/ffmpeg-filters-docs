@@ -64,7 +64,7 @@
           installPhase = ''
             mkdir -p "$out"/{source,bin}
 
-            cp -a "${bin-name}" lib "$out/source"
+            cp -a "${bin-name}" README.md lib "$out/source"
 
             bin="$out/bin/${bin-name}"
 

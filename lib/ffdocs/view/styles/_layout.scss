@@ -79,6 +79,10 @@ nav {
 
   .other-versions summary {
     padding-left: 1ex;
+
+    &:target {
+      color: var(--main-green);
+    }
   }
 
   .current-version {

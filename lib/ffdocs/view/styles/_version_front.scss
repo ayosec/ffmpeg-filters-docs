@@ -3,25 +3,20 @@
 :root {
   --versionfront-header: #333;
   --versionfront-lists-link: $link-color;
-  --versionfront-metadata-border: #ccc;
+  --versionfront-info-border: #ccc;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --versionfront-header: #ccc;
     --versionfront-lists-link: $link-color;
-    --versionfront-metadata-border: #555;
+    --versionfront-info-border: #555;
   }
 }
 
 main.version-front {
   section {
     margin-bottom: 2em;
-
-    &:not(:first-child) {
-      border-top: 5px solid var(--versionfront-metadata-border);
-      padding-top: 2em;
-    }
   }
 
   section.lists {
@@ -49,19 +44,40 @@ main.version-front {
     }
   }
 
-  section.metadata {
+  section.info {
+    // border-top: 2px solid var(--versionfront-info-border);
+    font-size: calc(var(--base-font-size) * 1.2);
+
     & > div:not(:first-child) {
       margin-top: 1em;
     }
 
-    .release-date {
-      p, time {
-        display: block;
-      }
+    h1, h2  {
+      padding-bottom: 0.2ch;
+      border-bottom: 1px solid var(--versionfront-info-border);
+    }
 
-      time {
-        font-family: monospace;
-      }
+    h2 {
+      font-size: calc(var(--base-font-size) * 1.4);
+    }
+
+    time {
+      font-family: monospace;
+    }
+
+    article {
+      padding-left: 1ch;
+    }
+
+    kbd {
+      display: inline-block;
+      font-family: monospace;
+      padding: 0 0.5ch;
+      color: black;
+      background: #aaaaaa;
+      border: 2px solid #444;
+      border-radius: 20%;
+      font-size: 90%;
     }
   }
 }

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="25" role="img" aria-label="Open Website">
+    <title>Open Website</title>
+    <rect
+        x="2%"
+        y="2%"
+        width="96%"
+        height="96%"
+        rx="5%"
+        stroke="#3c8b3c"
+        stroke-width="1%"
+        fill="#4cae4c"
+        />
+    <text
+        x="50%"
+        y="50%"
+        font-family="sans-serif"
+        fill="#fff"
+        font-size="16"
+        text-anchor="middle"
+        dominant-baseline="central"
+    >Open Website</text>
+</svg>

@@ -35,7 +35,7 @@
 
           - item_group_id = item&.group.object_id
           - nav_item_tree.each do |component, groups|
-            %details{ open: groups.any? {|g| g[1].any? {|g| g.object_id == item_group_id } } }
+            %details{ open: item.nil? || groups.any? {|g| g[1].any? {|g| g.object_id == item_group_id } } }
               %summary= component
 
               - groups.each do |media_type, groups|
@@ -59,7 +59,7 @@
 
         - if releases.size > 1
           %details.other-versions
-            %summary Other
+            %summary#other-versions-header Other Vers.
             - releases.each do |it_release|
               - if release != it_release
                 != link_to_file versioned_target(it_release, item), it_release.version, class: "version"
