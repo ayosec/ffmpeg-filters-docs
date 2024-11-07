@@ -21,6 +21,10 @@ body {
 header {
   grid-column: 1 / 3;
   grid-row: 1 / 2;
+
+  .sidebar-toggle, #sidebar-toggle-check {
+    display: none;
+  }
 }
 
 nav {
@@ -34,38 +38,84 @@ main {
 }
 
 @media screen and (max-width: 20cm) {
+  @supports selector(:has(a, b)) {
 
-  body {
-    grid-template-rows: auto 1fr auto;
-    grid-template-columns: auto;
+    body {
+      grid-template-rows: auto 1fr auto;
+      grid-template-columns: auto;
+    }
+
+    header {
+      grid-column: 1 / 2;
+      grid-row: 1 / 2;
+    }
+
+    nav, main {
+      grid-column: 1 / 2;
+      grid-row: 2 / 3;
+    }
+
+    // Toggle sidebar
+    header .sidebar-toggle {
+      display: flex;
+    }
+
+    body:has(#sidebar-toggle-check:checked) {
+      nav { display: block; }
+      main { display: none; }
+    }
+
+    body:not(:has(#sidebar-toggle-check:checked)) {
+      main { display: block; }
+      nav { display: none; }
+    }
+
   }
-
-  header {
-    grid-column: 1 / 2;
-    grid-row: 1 / 2;
-  }
-
-  nav {
-    grid-column: 1 / 2;
-    grid-row: 3 / 4;
-  }
-
-  main {
-    grid-column: 1 / 2;
-    grid-row: 2 / 3;
-  }
-
 }
 
 // Content.
 
 header {
-  display: flex;
-  justify-content: space-between;
-  padding: 1ex;
+  $padding: 1ex;
 
-  .links {
-    align-self: flex-end;
+  display: flex;
+  padding: $padding;
+  align-items: center;
+
+  .title {
+    flex: 1;
+  }
+
+  // Sidebar toggle button.
+  .sidebar-toggle {
+    align-items: center;
+
+    padding-right: $padding;
+
+    label {
+      font-size: 0;
+      overflow: hidden;
+
+      &::after {
+        content: " ";
+
+        font-size: 1rem;
+        display: inline-block;
+
+        $size: calc(var(--base-font-size) * 1.4);
+        height: $size;
+        width: $size;
+
+        background-image: svg-file(menu);
+        background-size: 100%;
+        background-position: center center;
+        background-repeat: no-repeat;
+      }
+    }
+
+    &:has(input:checked) label::after {
+      filter: sepia(100%) hue-rotate(90deg) saturate(10) drop-shadow(0 0 3px var(--main-green));;
+    }
   }
 }
 

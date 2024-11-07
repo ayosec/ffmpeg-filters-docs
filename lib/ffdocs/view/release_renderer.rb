@@ -249,11 +249,15 @@ module FFDocs::View
 
       when "Other Vers."
         js = <<~JS
-          (function(e) {
-            e.open = true;
+          (function() {
+            const ov = document.querySelector(".other-versions");
+            const sidebar = document.querySelector("#sidebar-toggle-check");
 
-            requestAnimationFrame(() => e.scrollIntoView(true));
-          })(document.querySelector(".other-versions"));
+            sidebar.checked = true;
+            ov.open = true;
+
+            requestAnimationFrame(() => ov.scrollIntoView(true));
+          })();
 
           return false;
         JS

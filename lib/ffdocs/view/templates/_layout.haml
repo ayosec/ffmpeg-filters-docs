@@ -22,7 +22,12 @@
 
   %body
     %header
+      .sidebar-toggle
+        %input{type: "checkbox", id: "sidebar-toggle-check"}
+        %label{for: "sidebar-toggle-check"} Sidebar
+
       .title= "FFmpeg #{release ? release.version : ""}"
+
       .links
         != link_to_file :version_matrix, "Version Matrix"
         - if project_url
