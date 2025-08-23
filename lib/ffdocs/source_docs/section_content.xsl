@@ -3,6 +3,12 @@
 
   <xsl:param name="show-item-title" />
 
+  <xsl:key
+    name="cuda-group"
+    match="chapter[sectiontitle/text() = 'CUDA Video Filters']"
+    use="'1'"
+  />
+
   <!-- Links to official documentation -->
   <xsl:variable name="manuals">
     <link key="ffmpeg" url="https://ffmpeg.org/ffmpeg.html" />
@@ -17,6 +23,18 @@
     <doc><xsl:apply-templates /></doc>
   </xsl:template>
 
+  <xsl:template match="key('cuda-group', '1')">
+    <xsl:for-each select="section">
+      <group>
+        <xsl:attribute name="title" select="concat(sectiontitle/text(), ' Video Filters')" />
+
+        <xsl:for-each select="subsection">
+          <xsl:call-template name="filter-page" />
+        </xsl:for-each>
+      </group>
+    </xsl:for-each>
+  </xsl:template>
+
   <xsl:template match="chapter">
     <group>
       <xsl:attribute name="title" select="sectiontitle" />
@@ -25,6 +43,10 @@
   </xsl:template>
 
   <xsl:template match="section">
+      <xsl:call-template name="filter-page" />
+  </xsl:template>
+
+  <xsl:template name="filter-page">
     <section>
       <xsl:attribute name="data-title" select="sectiontitle" />
 
@@ -38,7 +60,7 @@
     </section>
   </xsl:template>
 
-  <xsl:template match="subsection">
+  <xsl:template match="subsection | subsubsection[ancestor::*[key('cuda-group', '1')]]">
     <section>
       <xsl:if test="sectiontitle/text() = 'Examples'">
         <xsl:attribute name="class">examples</xsl:attribute>
