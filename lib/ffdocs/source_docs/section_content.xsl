@@ -15,6 +15,7 @@
     <link key="ffmpeg-resampler" url="https://ffmpeg.org/ffmpeg-resampler.html" />
     <link key="ffmpeg-scaler" url="https://ffmpeg.org/ffmpeg-scaler.html" />
     <link key="ffmpeg-utils" url="https://ffmpeg.org/ffmpeg-utils.html" />
+    <link key="drawvg-reference" url="https://www.ffmpeg.org/drawvg-reference.html" />
   </xsl:variable>
 
   <!-- Block items -->
@@ -168,6 +169,13 @@
       </xsl:attribute>
 
       <xsl:apply-templates />
+    </a>
+  </xsl:template>
+
+  <xsl:template match="uref[urefurl]">
+    <a target="_blank">
+      <xsl:attribute name="href"><xsl:value-of select="urefurl" /></xsl:attribute>
+      <xsl:value-of select="urefdesc" />
     </a>
   </xsl:template>
 
