@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "code_examples_lexer"
+require_relative "vgs_lexer"
 
 module FFDocs::SourceDocs
   class HTMLAdapter
@@ -51,6 +52,8 @@ module FFDocs::SourceDocs
           Rouge::Lexers::Shell.new
         when /\A(-i|ffplay|ffmpeg|ffprobe)/, /\A(#.+\n)*(\.\/)?(ffplay|ffmpeg|ffprobe)/
           CodeExamplesLexer.new
+        when /\b(translate|rotate|setcolor)\b/
+          VGSLexer.new
         when /\A(\[(\w|-)+\]|\w+=)/, /\A\w+\[\w\]/
           CodeExamplesLexer.new :filtergraph
         end
