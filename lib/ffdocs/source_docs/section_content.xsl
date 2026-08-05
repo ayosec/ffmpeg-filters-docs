@@ -5,7 +5,7 @@
 
   <xsl:key
     name="cuda-group"
-    match="chapter[sectiontitle/text() = 'CUDA Video Filters']"
+    match="chapter[section/sectiontitle/text() = 'CUDA']"
     use="'1'"
   />
 
